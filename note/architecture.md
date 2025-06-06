@@ -1,0 +1,39 @@
+# Architecture
+
+* basics
+	* config
+	* keys
+	* test
+	* logging
+	* docker-compose
+* main
+	* common/
+		* websocket
+		* kafka
+		* postgresql
+		* airflow/dags/
+	* strategy/
+		* metrics/
+		* rule-based/
+		* machine-learning/
+			* models/
+			* features/
+			* parameters/
+	* services/
+		* web/
+		* mlops/
+			* inference
+			* train
+			* data-engineering
+			* deploy
+		* binance-connector/ 
+			* real-time/
+			* signal/ 
+				* sender/
+				* receiver/
+			* historical/
+			* order/ 
+				* call/
+				* orderbook/
+		* backtest/
+		* scripts/
