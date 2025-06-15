@@ -2,10 +2,32 @@
 
 ## 1. Get real-time price data from Binance Websocket
 - What does 'id' parameter do in binance websocket request?
+  - Maybe, message from server returns faster when using the same id with subscription.
+unsubscribe with same id:
+```
+2025-06-15 19:01:56,460 DEBUG	main.common.websocket.websocket_client 	 Sending message to Binance WebSocket Server: {"method": "UNSUBSCRIBE", "params": ["btcusdt@miniTicker", "ethusdt@miniTicker"], "id": 1749981711272}
+2025-06-15 19:01:56,460 INFO	main.binance_connector.data_handler 	 Unsubscribed: ['btcusdt@miniTicker', 'ethusdt@miniTicker']
+2025-06-15 19:01:56,460 DEBUG	main.common.websocket.websocket_client 	 Closing websocket
+2025-06-15 19:01:56,461 DEBUG	main.common.websocket.websocket_client 	 Websocket closed
+{"result":null,"id":1749981711272}
+2025-06-15 19:01:56,516 WARNING	main.common.websocket.websocket_client 	 CLOSE frame received, closing websocket connection
+2025-06-15 19:01:56,516 INFO	main.binance_connector.data_handler 	 Data handler stopped
+```
+
+unsubscribe with different id:
+```
+2025-06-15 19:00:57,776 DEBUG	main.common.websocket.websocket_client 	 Sending message to Binance WebSocket Server: {"method": "UNSUBSCRIBE", "params": ["btcusdt@miniTicker", "ethusdt@miniTicker"], "id": 1749981657776}
+2025-06-15 19:00:57,776 INFO	main.binance_connector.data_handler 	 Unsubscribed: ['btcusdt@miniTicker', 'ethusdt@miniTicker']
+2025-06-15 19:00:57,776 DEBUG	main.common.websocket.websocket_client 	 Closing websocket
+2025-06-15 19:00:57,777 DEBUG	main.common.websocket.websocket_client 	 Websocket closed
+2025-06-15 19:00:57,873 WARNING	main.common.websocket.websocket_client 	 CLOSE frame received, closing websocket connection
+2025-06-15 19:00:57,873 INFO	main.binance_connector.data_handler 	 Data handler stopped
+{"result":null,"id":1749981657776}
+```
+
 - Threading
   - Websocket should handle data continuously and in parallel. So, creating another thread is necessary to continue reading while performing other processes
 - Logging
-  - https://velog.io/@qlgks1/python-python-logging-해부
   - Singleton pattern: Multiple calls to logging.getLogger('someLogger') return a reference to the same logger object as long as it is in the same Python interpreter process.
   - Observer pattern: A change in the state of one object (the Subject) automatically notifies multiple dependent objects (Observers). A single log event is delivered simultaneously to multiple handlers (observers), allowing each handler to process the log independently.
     - All attached handlers are invoked sequentially in the same thread. Internally, threading.RLock is used to prevent race conditions between threads, but this is for thread safety in multi-threaded environments and does not mean that handlers are executed in parallel. Therefore, if there is a slow handler, blocking issues may occur.
@@ -15,13 +37,22 @@
   - print() function works synchronously, so when a thread calls print(), it blocks until all the I/O operations are completed.
   - In a multiprocessing program, log messages can become mixed because each process has an independent logging instance.
     - Implement a SocketHandler or QueueHandler to serialize log messages through a single process.
+- Websocket instance might handle multiple subscriptions. 
+  - Check tradeoff between latency and cleancode. 
 ## 2. Send data to Kafka
-
+- Scope: 1 symbol(BTC) and 1 stream(mini_tikcer) 
+  - It can be expanded to multiple symbols and multiple streams. Code should be reusable.
+  - How should I define a topic? By symbol or by stream?
+    - Considering that I'm developing a personal project, topics should be divided by symbol, since I have no plan expanding it yet.
+    - However, if I have plan to handle multiple symbols, maintaining same data format in one topic should be best practice.
+      - So, one websocket client should receive data from the same stream name, but multiple symbols.
+      - Different streams might have different data return time, so it'll be clearer to separate each other.
+      - But, I can subscribe at most 2 symbols in one stream due to limits. 
 ## 3. Save data from Kafka to Postgresql
 
 ## 4. Design Web
 
-## 5. Visualize data from Postgresql to sWeb
+## 5. Visualize data from Postgresql to Web
 
 ## 6. Visualize data from Kafka to Web
 
