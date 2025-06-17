@@ -2,7 +2,7 @@
 
 ## 1. Get real-time price data from Binance Websocket
 - What does 'id' parameter do in binance websocket request?
-  - Maybe, message from server returns faster when using the same id with subscription.
+  - Maybe, message from server returns faster when using the same id used in initial subscription.
 unsubscribe with same id:
 ```
 2025-06-15 19:01:56,460 DEBUG	main.common.websocket.websocket_client 	 Sending message to Binance WebSocket Server: {"method": "UNSUBSCRIBE", "params": ["btcusdt@miniTicker", "ethusdt@miniTicker"], "id": 1749981711272}
@@ -40,14 +40,21 @@ unsubscribe with different id:
 - Websocket instance might handle multiple subscriptions. 
   - Check tradeoff between latency and cleancode. 
 ## 2. Send data to Kafka
+- Maybe I can change Kafka to Redis later for instant data access.
 - Scope: 1 symbol(BTC) and 1 stream(mini_tikcer) 
   - It can be expanded to multiple symbols and multiple streams. Code should be reusable.
   - How should I define a topic? By symbol or by stream?
-    - Considering that I'm developing a personal project, topics should be divided by symbol, since I have no plan expanding it yet.
+    - Considering that I'm developing a personal project, topics should be divided by symbol, since I have no plan of expanding it yet.
     - However, if I have plan to handle multiple symbols, maintaining same data format in one topic should be best practice.
       - So, one websocket client should receive data from the same stream name, but multiple symbols.
       - Different streams might have different data return time, so it'll be clearer to separate each other.
       - But, I can subscribe at most 2 symbols in one stream due to limits. 
+- bootstrap_servers only needs to contain a partial list of brokers. 
+  - Kafka retrieves cluster information from successfully connected brokers. (list of brokers, partition information, etc.)
+  - Scaling a Kafka cluster itself has nothing to do with bootstrap_servers, and Kafka automatically reflects the new brokers in its metadata when scaling.
+- async kafka
+  - Why? When data is sent synchronously to Kafka, the WebSocket thread is blocked during the sending process. It might occur a bottleneck.
+  - How? Asynchronous functions in the kafka class can only be executed in the loop in which that instance is running. Since WebsocketClient runs in its own thread, it calls ayncio.run_coroutine_threadsafe to offload the asynchronous on_message work to another thread.
 ## 3. Save data from Kafka to Postgresql
 
 ## 4. Design Web

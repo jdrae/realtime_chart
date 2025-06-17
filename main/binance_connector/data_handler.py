@@ -1,21 +1,29 @@
+import asyncio
 import json
 import logging
 
 from main.binance_connector.binance_enum import Symbol, StreamName
+from main.common.kafka.async_kafka_publisher import AsyncKafkaPublisher
 from main.common.utils import get_timestamp
 from main.common.websocket.websocket_client import WebSocketClient
 
 
 class DataHandler:
-    def __init__(self, stream_name: StreamName, symbols: list[Symbol]):
+    def __init__(self, stream_name: StreamName, symbols: list[Symbol], publisher: AsyncKafkaPublisher, loop: asyncio.AbstractEventLoop):
         self.logger = logging.getLogger(__name__)
         self.id = get_timestamp()
         self.stream_names = list(map(lambda x: stream_name.value.format(x.value), symbols))
         self.stream_url = "wss://stream.binance.com:9443/stream"
         self.websocketClient = WebSocketClient(stream_url=self.stream_url, on_message=self.on_message)
+        self.publisher = publisher
+        self.loop = loop
 
     def on_message(self, data):
-        print(data)
+        future = asyncio.run_coroutine_threadsafe(self.publisher.publish(data), self.loop)
+        try:
+            future.result(timeout=1)
+        except Exception as e:
+            self.logger.error("Kafka publish failed: {}".format(e), exc_info=True)
 
     def start(self):
         self.logger.info("Starting data handler")

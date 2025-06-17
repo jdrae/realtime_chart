@@ -1,1 +1,2 @@
 websocket-client~=1.8.0
+aiokafka~=0.12.0
