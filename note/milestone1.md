@@ -55,6 +55,9 @@ unsubscribe with different id:
 - async kafka
   - Why? When data is sent synchronously to Kafka, the WebSocket thread is blocked during the sending process. It might occur a bottleneck.
   - How? Asynchronous functions in the kafka class can only be executed in the loop in which that instance is running. Since WebsocketClient runs in its own thread, it calls ayncio.run_coroutine_threadsafe to offload the asynchronous on_message work to another thread.
+  - asyncio.sleep
+    - Why? The main thread must not terminate so that the event loop stays alive and coroutine tasks can run properly. Threads created with threading.Thread are non-daemon by default, meaning they can stay alive even after the main thread ends. However, in the current code, the thread object is created inside main(), so it disappears when main terminates. 
+    - time.sleep? While the main thread is paused and other threads keep running, the event loop in the main thread also stops, making it impossible to register coroutines. As a result, data may be lost.
 ## 3. Save data from Kafka to Postgresql
 
 ## 4. Design Web

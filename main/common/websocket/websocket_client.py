@@ -1,6 +1,8 @@
 import logging
 import threading
+
 import websocket
+
 
 class WebSocketClient(threading.Thread):
     def __init__(self, stream_url, on_message):
@@ -10,6 +12,10 @@ class WebSocketClient(threading.Thread):
         self.timeout = None
         self.ws = None
         self.on_message = on_message
+
+    def __del__(self):
+        self.logger.debug("WebSocketClient.__del__")
+        self.close()
 
     def run(self):
         self.read_data()

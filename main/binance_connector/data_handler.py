@@ -18,7 +18,13 @@ class DataHandler:
         self.publisher = publisher
         self.loop = loop
 
+    def __del__(self):
+        self.logger.debug("DataHandler.__del__")
+        self.stop()
+
     def on_message(self, data):
+        if "id" in data:
+            self.logger.debug(f"on_message: {data}")
         future = asyncio.run_coroutine_threadsafe(self.publisher.publish(data), self.loop)
         try:
             future.result(timeout=1)
@@ -26,18 +32,21 @@ class DataHandler:
             self.logger.error("Kafka publish failed: {}".format(e), exc_info=True)
 
     def start(self):
-        self.logger.info("Starting data handler")
+        self.logger.info("Starting DataHandler")
         self.websocketClient.connect() # start connection
         self.websocketClient.start() # start thread
         self.subscribe()
-        self.logger.info("Data handler started")
+        self.logger.info("DataHandler started")
 
     def stop(self):
-        self.logger.info("Stopping data handler")
+        self.logger.info("Stopping DataHandler")
+        if not self.websocketClient.ws.connected:
+            self.logger.warning("DataHandler already closed")
+            return
         self.unsubscribe()
         self.websocketClient.close() # end connection
         self.websocketClient.join() # end thread
-        self.logger.info("Data handler stopped")
+        self.logger.info("DataHandler stopped")
 
     def subscribe(self):
         json_msg = json.dumps({"method": "SUBSCRIBE", "params": self.stream_names, "id": self.id})
