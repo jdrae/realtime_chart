@@ -9,7 +9,13 @@ from main.common.websocket.websocket_client import WebSocketClient
 
 
 class DataHandler:
-    def __init__(self, stream_name: StreamName, symbols: list[Symbol], publisher: AsyncKafkaPublisher, loop: asyncio.AbstractEventLoop):
+    def __init__(
+        self,
+        stream_name: StreamName,
+        symbols: list[Symbol],
+        publisher: AsyncKafkaPublisher,
+        loop: asyncio.AbstractEventLoop,
+    ):
         self.logger = logging.getLogger(__name__)
         self.id = get_timestamp()
         self.stream_names = list(map(lambda x: stream_name.value.format(x.value), symbols))
@@ -33,8 +39,8 @@ class DataHandler:
 
     def start(self):
         self.logger.info("Starting DataHandler")
-        self.websocketClient.connect() # start connection
-        self.websocketClient.start() # start thread
+        self.websocketClient.connect()  # start connection
+        self.websocketClient.start()  # start thread
         self.subscribe()
         self.logger.info("DataHandler started")
 
@@ -44,8 +50,8 @@ class DataHandler:
             self.logger.warning("DataHandler already closed")
             return
         self.unsubscribe()
-        self.websocketClient.close() # end connection
-        self.websocketClient.join() # end thread
+        self.websocketClient.close()  # end connection
+        self.websocketClient.join()  # end thread
         self.logger.info("DataHandler stopped")
 
     def subscribe(self):

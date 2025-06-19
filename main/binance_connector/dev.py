@@ -17,14 +17,13 @@ async def main():
     loop.add_signal_handler(signal.SIGINT, lambda: shutdown_event.set())
     loop.add_signal_handler(signal.SIGTERM, lambda: shutdown_event.set())
 
-    kafka_bootstrap_servers = os.getenv('KAFKA_BOOTSTRAP_SERVERS')
+    kafka_bootstrap_servers = os.getenv("KAFKA_BOOTSTRAP_SERVERS")
     publisher = AsyncKafkaPublisher(brokers=kafka_bootstrap_servers, topic="dev-topic")
     await publisher.start()
 
-    handler = DataHandler(stream_name=StreamName.MINI_TICKER,
-                          symbols=[Symbol.BTCUSDT],
-                          publisher=publisher,
-                          loop=loop)
+    handler = DataHandler(
+        stream_name=StreamName.MINI_TICKER, symbols=[Symbol.BTCUSDT], publisher=publisher, loop=loop
+    )
     handler.start()
 
     try:
@@ -32,6 +31,7 @@ async def main():
     finally:
         handler.stop()
         await publisher.stop()
+
 
 if __name__ == "__main__":
     try:

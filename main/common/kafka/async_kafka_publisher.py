@@ -14,8 +14,7 @@ class AsyncKafkaPublisher:
     async def start(self):
         self.logger.info("Starting Kafka publisher")
         self.producer = AIOKafkaProducer(
-            bootstrap_servers=self.brokers,
-            value_serializer=lambda v: json.dumps(v).encode("utf-8")
+            bootstrap_servers=self.brokers, value_serializer=lambda v: json.dumps(v).encode("utf-8")
         )
         await self.producer.start()
         self.logger.info("Kafka publisher started")
