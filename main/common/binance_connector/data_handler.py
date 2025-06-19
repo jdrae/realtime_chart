@@ -2,7 +2,7 @@ import asyncio
 import json
 import logging
 
-from main.binance_connector.binance_enum import Symbol, StreamName
+from main.common.binance_connector.binance_enum import Symbol, StreamName
 from main.common.kafka.async_kafka_publisher import AsyncKafkaPublisher
 from main.common.utils import get_timestamp
 from main.common.websocket.websocket_client import WebSocketClient
