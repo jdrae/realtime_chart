@@ -16,7 +16,7 @@ if __name__ == "__main__":
         host=os.getenv("POSTGRES_HOST"),
         port=os.getenv("POSTGRES_PORT"),
     )
-    handler = PostgresDataConsumer(db_client, table="miniticker_dev_raw", group_id="miniticker_dev")
+    handler = PostgresDataConsumer(db_client, table="miniticker_raw", group_id="miniticker_dev")
     consumer = KafkaConsumerManager(
         brokers=os.getenv("KAFKA_BOOTSTRAP_SERVERS"),
         topic=os.getenv("KAFKA_TOPIC_MINITICKER"),
