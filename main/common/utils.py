@@ -1,6 +1,6 @@
-import time
-import logging
 import json
+import logging
+import time
 
 
 def get_timestamp():
@@ -16,7 +16,7 @@ def default_logger(name, log_level):
 
 
 def _plain_formatter():
-    return logging.Formatter("%(asctime)s %(levelname)s\t%(name)s \t %(message)s")
+    return logging.Formatter("%(asctime)s.%(msecs)03d UTC %(levelname)s\t%(name)s \t %(message)s")
 
 
 def _console_handler():

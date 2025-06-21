@@ -4,18 +4,42 @@ import threading
 import websocket
 
 
-class WebSocketClient(threading.Thread):
+class WebsocketClient(threading.Thread):
     def __init__(self, stream_url, on_message):
         threading.Thread.__init__(self)
         self.logger = logging.getLogger(__name__)
         self.stream_url = stream_url
-        self.timeout = None
         self.ws = None
         self.on_message = on_message
 
-    def __del__(self):
-        self.logger.debug("WebSocketClient.__del__")
-        self.close()
+    def start(self):
+        self.connect()  # start connection
+        super().start()  # start thread
+
+    def stop(self):
+        self.close()  # end connection
+        super().join()  # end threa
+
+    def ping(self):
+        self.logger.debug("Sending ping to Binance WebSocket Server")
+        self.ws.ping()
+
+    def send(self, message):
+        self.logger.debug("Sending message to WebSocket Server: {}".format(message))
+        self.ws.send(message)
+
+    def connect(self):
+        self.logger.debug("Connecting to websocket")
+        self.ws = websocket.create_connection(self.stream_url)
+        self.logger.debug("Connected to websocket")
+
+    def close(self):
+        self.logger.debug("Closing websocket")
+        if not self.ws.connected:
+            self.logger.warning("Websocket already closed")
+        else:
+            self.ws.send_close()
+            self.logger.debug("Websocket closed")
 
     def run(self):
         self.read_data()
@@ -69,21 +93,3 @@ class WebSocketClient(threading.Thread):
 
     def _handle_exception(self, e):
         raise e
-
-    ### Wrapped Methods ###
-    def connect(self):
-        self.logger.debug("Connecting to websocket")
-        self.ws = websocket.create_connection(self.stream_url, timeout=self.timeout)
-        self.logger.debug("Connected to websocket")
-
-    def send(self, message):
-        self.logger.debug("Sending message to Binance WebSocket Server: {}".format(message))
-        self.ws.send(message)
-
-    def close(self):
-        self.logger.debug("Closing websocket")
-        if not self.ws.connected:
-            self.logger.warning("Websocket already closed")
-        else:
-            self.ws.send_close()
-            self.logger.debug("Websocket closed")

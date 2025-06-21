@@ -1,8 +1,8 @@
 import logging
 import os
 
-from main.common.kafka.kafka_consumer import KafkaConsumerManager, PostgresDataConsumer
-from main.common.postgres.postgres_client import PostgresClient
+from main.common.kafka_consumer import KafkaConsumerManager, PostgresDataConsumer
+from main.common.postgres_client import PostgresClient
 from main.common.utils import default_logger
 
 logger = default_logger("main", logging.DEBUG)
