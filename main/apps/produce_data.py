@@ -22,7 +22,7 @@ async def produce_data(target_stream, target_symbols):
     loop.add_signal_handler(signal.SIGTERM, lambda: shutdown_event.set())
 
     publisher = AsyncKafkaPublisher(
-        brokers=os.getenv("KAFKA_BOOTSTRAP_SERVERS"), topic=config["KAFKA_TOPIC"][target_stream]
+        brokers=os.getenv("KAFKA_BOOTSTRAP_SERVERS"), topic=config[target_stream]["KAFKA_TOPIC"]
     )
     # TODO: handle future timeout exception
     websocket = WebsocketClient(
@@ -30,7 +30,7 @@ async def produce_data(target_stream, target_symbols):
         on_message=lambda data: asyncio.run_coroutine_threadsafe(publisher.publish(data), loop),
     )
     connector = BinanceConnector(
-        stream_name=config["STREAM_NAME"][target_stream],
+        stream_name=config[target_stream]["STREAM_NAME"],
         symbols=list(map(lambda x: config["SYMBOL"][x], target_symbols)),
         websocket=websocket,
     )

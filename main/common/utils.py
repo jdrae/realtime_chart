@@ -11,11 +11,12 @@ def default_logger(name, log_level):
     logger = logging.getLogger(name)
     logger.setLevel(log_level)
     logger.addHandler(_console_handler())
-    # logger.addHandler(_file_handler())
+    # logger.addHandler(_file_handler()) # TODO: save log to file
     return logger
 
 
 def _plain_formatter():
+    # TODO: print utc
     return logging.Formatter("%(asctime)s.%(msecs)03d UTC %(levelname)s\t%(name)s \t %(message)s")
 
 

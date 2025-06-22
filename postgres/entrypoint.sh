@@ -11,10 +11,14 @@ done
 
 echo "PostgreSQL is ready. Executing SQL files in /sql..."
 
-for f in /sql/*.sql; do
-  echo "Running $f..."
-  psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -f "$f"
-  echo "Done $f"
+for file in /sql/*.sql; do
+  if [ -f "$file" ]; then
+    echo "=== $file ==="
+    cat "$file"
+    echo
+  fi
+  psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -f "$file"
+  echo "Done $file"
 done
 
 wait
