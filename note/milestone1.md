@@ -60,11 +60,12 @@ unsubscribe with different id:
     - time.sleep? While the main thread is paused and other threads keep running, the event loop in the main thread also stops, making it impossible to register coroutines. As a result, data may be lost.
 ## 3. Save data from Kafka to Postgresql
 - batch insert
-- bottleneck
+- bottleneck -> use thread
 ## 4. Design Web
 
-## 5. Visualize data from Postgresql to Web
+## 5. Visualize data from Kafka to Web
+- memory leak of KafkaConsumer
 
-## 6. Visualize data from Kafka to Web
+## 6. Visualize data from Postgresql to Web
 
 ## 7. Modify past data in Postgresql (?)
