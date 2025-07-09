@@ -1,21 +1,25 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
+  <title>{{ topic }}</title>
+  <script src="https://cdn.socket.io/4.7.1/socket.io.min.js"></script>
 </head>
 <body>
-  <h1>price: <span id="price">waiting...</span></h1>
-  <h1>latency: <span id="latency">waiting...</span></h1>
+  <h1>Real-time {{ topic }} prices</h1>
+  <h2>price: <span id="price">waiting...</span></h2>
+  <h2>latency: <span id="latency">waiting...</span></h2>
 
   <script>
     const socket = io();
 
-    socket.on('random_number', function(data) {
-      console.log(data);
+    socket.on("connect", () => {
+      socket.emit("subscribe", { topic: "{{ topic }}" });
+    });
+
+    socket.on("message", (data) => {
       document.getElementById('price').textContent = data['data']['c'];
 
       const latency = Date.now() - data['data']['E']; // TODO: offset
-      console.log(latency);
       document.getElementById('latency').textContent = `${latency}ms`;
     });
   </script>
