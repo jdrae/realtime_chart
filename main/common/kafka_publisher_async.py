@@ -25,5 +25,5 @@ class AsyncKafkaPublisher:
             await self.producer.stop()
             self.logger.info("Kafka publisher stopped")
 
-    async def publish(self, data: dict):
+    async def publish(self, data: str):
         await self.producer.send_and_wait(self.topic, data)

@@ -1,5 +1,6 @@
 import logging
 import threading
+import time
 
 import websocket
 
@@ -60,7 +61,9 @@ class WebsocketClient(threading.Thread):
                 self._handle_heartbeat(op_code, frame)
 
     def _handle_data(self, op_code, frame):
+        received_at = int(time.time() * 1000)
         data = frame.data.decode("utf-8")
+        data = data[:-1] + ', "received_at": ' + str(received_at) + "}"
         self._callback(self.on_message, data)
 
     def _handle_heartbeat(self, op_code, frame):
