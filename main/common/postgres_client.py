@@ -95,7 +95,8 @@ class BatchInserter:
     def _insert_worker(self):
         while self.running or not self.flush_queue.empty():
             try:
-                batch = self.flush_queue.get(timeout=1)  # if timeout=None, wait until an item is available.
+                # queue timeout is necessary when process ended without any data
+                batch = self.flush_queue.get(timeout=3)
                 self.db_client.insert_many(self.query, batch)
             except queue.Empty:
                 continue

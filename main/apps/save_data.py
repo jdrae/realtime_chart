@@ -1,9 +1,12 @@
+import argparse
 import configparser
 import logging
 import os
+import signal
+import sys
 
 from main.common.entity import *
-from main.common.entity_mapper import MiniTickerEntityMapper
+from main.common.entity_mapper import get_json_entity_mapper
 from main.common.kafka_consumer import KafkaConsumerManager
 from main.common.postgres_client import BatchInserter, PostgresClient
 from main.common.postgres_kafka_data_handler import PostgresKafkaDataHandler
@@ -12,33 +15,50 @@ from main.common.utils import default_logger
 logger = default_logger("main", logging.DEBUG)
 
 
-def save_data(target_stream):
+def handle_exit(signum, frame):
+    signal_name = signal.Signals(signum).name
+    logger.warning(f"Received signal {signal_name}, exiting process.")
+    sys.exit(0)
+
+
+signal.signal(signal.SIGINT, handle_exit)
+signal.signal(signal.SIGTERM, handle_exit)
+
+
+def save_data(stream):
     config = configparser.ConfigParser()
     config.read("config.ini")
 
-    logger.info("Start app with stream: {}".format(target_stream))
-    for cfg in config[target_stream].keys():
-        logger.info("[{}] {}".format(cfg, config[target_stream][cfg]))
+    try:
+        stream = stream.upper()
+        logger.info(f"Start app with stream: {stream}")
+        for cfg in config[stream].keys():
+            logger.info("[{}] {}".format(cfg, config[stream][cfg]))
+    except:
+        logger.warning(f"Configuration error: --stream {stream}")
 
     db_client = PostgresClient()
 
+    mapper = get_json_entity_mapper(stream)
+    target_class = mapper.get_target_class()
+
     inserter_processed = BatchInserter(
         db_client,
-        MiniTicker.sql_insert(config[target_stream]["POSTGRES_TABLE_PROCESSED"], bulk=True),
+        query=target_class.sql_insert(config[stream]["POSTGRES_TABLE_PROCESSED"]),
         batch_size=40,
     )
     inserter_raw = BatchInserter(
-        db_client, Raw.sql_insert(config[target_stream]["POSTGRES_TABLE_RAW"], bulk=True), batch_size=40
+        db_client, query=Raw.sql_insert(config[stream]["POSTGRES_TABLE_RAW"]), batch_size=5
     )
     inserter_failed = BatchInserter(
         db_client,
-        Failed.sql_insert(config[target_stream]["POSTGRES_TABLE_FAILED"], bulk=True),
+        query=Failed.sql_insert(config[stream]["POSTGRES_TABLE_FAILED"]),
         batch_size=1,
     )
 
     handler = PostgresKafkaDataHandler(
-        config[target_stream]["KAFKA_GROUP_POSTGRES"],
-        MiniTickerEntityMapper(),
+        group_id=config[stream]["KAFKA_GROUP_POSTGRES"],
+        mapper=mapper,
         inserter_processed=inserter_processed,
         inserter_raw=inserter_raw,
         inserter_failed=inserter_failed,
@@ -46,7 +66,7 @@ def save_data(target_stream):
 
     consumer = KafkaConsumerManager(
         brokers=os.getenv("KAFKA_BOOTSTRAP_SERVERS"),
-        topic=config[target_stream]["KAFKA_TOPIC"],
+        topic=config[stream]["KAFKA_TOPIC"],
         handler=handler,
     )
 
@@ -70,6 +90,11 @@ def save_data(target_stream):
 
 
 if __name__ == "__main__":
-    target_stream = "MINITICKER"
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--stream", type=str, required=True)
+    args = parser.parse_args()
 
-    save_data(target_stream)
+    try:
+        save_data(stream=args.stream)
+    except Exception as e:
+        logger.critical(f"Process finished unexpectedly: {e}")

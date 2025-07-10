@@ -1,6 +1,5 @@
-CREATE TABLE IF NOT EXISTS miniticker_failed (
+CREATE TABLE IF NOT EXISTS kline_1s_raw (
     id SERIAL PRIMARY KEY,
     payload JSONB NOT NULL,
-    error TEXT NULL,
     saved_at TIMESTAMP DEFAULT (NOW() AT TIME ZONE 'UTC')
 );

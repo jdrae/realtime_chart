@@ -17,11 +17,9 @@ class Entity:
         return [f.name for f in fields(cls) if f.name not in cls.EXCLUDE_INSERT_COLS]
 
     @classmethod
-    def sql_insert(cls, table_name: str, bulk) -> str:
+    def sql_insert(cls, table_name: str) -> str:
         cols = cls.cols_insert()
         placeholders = "%s"
-        if not bulk:
-            placeholders = "(" + ", ".join(["%s"] * len(cols)) + ")"
         col_str = ", ".join(cols)
         return f"INSERT INTO {table_name} ({col_str}) VALUES {placeholders}"
 
@@ -33,9 +31,9 @@ class Entity:
 class Raw(Entity):
     payload: str
     id: Optional[str] = None
-    received_at: Optional[str] = None
+    saved_at: Optional[str] = None
 
-    EXCLUDE_INSERT_COLS = {"id", "received_at"}
+    EXCLUDE_INSERT_COLS = {"id", "saved_at"}
 
 
 @dataclass
@@ -43,22 +41,46 @@ class Failed(Entity):
     payload: str
     error: str
     id: Optional[str] = None
-    received_at: Optional[str] = None
+    saved_at: Optional[str] = None
 
-    EXCLUDE_INSERT_COLS = {"id", "received_at"}
+    EXCLUDE_INSERT_COLS = {"id", "saved_at"}
 
 
 @dataclass
 class MiniTicker(Entity):
-    event_time: str
+    event_time: int
     symbol: str
-    close_price: str
     open_price: str
+    close_price: str
     high_price: str
     low_price: str
     volume_base: str
     volume_quote: str
-    id: Optional[str] = None
-    received_at: Optional[str] = None
 
-    EXCLUDE_INSERT_COLS = {"id", "received_at"}
+    id: Optional[str] = None
+    saved_at: Optional[str] = None
+    EXCLUDE_INSERT_COLS = {"id", "saved_at"}
+
+
+@dataclass
+class Kline(Entity):
+    event_time: int
+    symbol: str
+    is_closed: bool
+    start_time: int
+    close_time: int
+    first_trade_id: int
+    last_trade_id: int
+    open_price: str
+    close_price: str
+    high_price: str
+    low_price: str
+    trade_count: int
+    volume_base: str
+    volume_quote: str
+    taker_volume_base: str
+    taker_volume_quote: str
+
+    id: Optional[str] = None
+    saved_at: Optional[str] = None
+    EXCLUDE_INSERT_COLS = {"id", "saved_at"}
