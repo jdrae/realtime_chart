@@ -1,11 +1,11 @@
 from flask import request
+from flask_socketio import SocketIO
 
-from flaskprice.clients import ClientManager
+from flaskprice.config import SUPPORTED_STREAMS
+from flaskprice.state import clients
 
 
-def register_events(socketio):
-    client_manager = ClientManager.get_instance()
-
+def register_events(socketio: SocketIO):
     @socketio.on("connect")
     def handle_connect():
         sid = request.sid
@@ -14,15 +14,20 @@ def register_events(socketio):
     @socketio.on("subscribe")
     def handle_subscribe(data):
         sid = request.sid
-        stream = data.get("stream")
+        stream = data.get("stream").upper()
         print(f"[{sid}][{stream}] subscribe")
-        if stream not in client_manager.get_streams():
+        if stream in SUPPORTED_STREAMS:
+            clients[stream].add(sid)
+            print(clients)
+        else:
             socketio.emit("error", {"message": f"invalid stream: {stream}"})
+            print("error")
             return
-        client_manager.add_client(sid, stream)
 
     @socketio.on("disconnect")
     def handle_disconnect():
         sid = request.sid
         print(f"[{sid}] disconnect")
-        client_manager.remove_client(sid)
+        for stream in SUPPORTED_STREAMS:
+            clients[stream].discard(sid)
+        print(clients)

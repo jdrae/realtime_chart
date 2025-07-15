@@ -4,5 +4,4 @@ SOCKETIO_PORT = 5555
 CORS_ORIGINS = "*"
 KAFKA_TOPIC = "kline_1s"
 KAFKA_GROUP_ID = "kline_1s_flask"
-SUPPORTED_STREAMS = ["btcusdt", "ethusdt", "xrpusdt"]  # used as 'streams' variable
-SYMBOL_TO_STREAM = {"BTCUSDT": "btcusdt", "ETHUSDT": "ethusdt", "XRPUSDT": "xrpusdt"}
+SUPPORTED_STREAMS = ["BTCUSDT", "ETHUSDT", "XRPUSDT"]  # used as 'streams' variable

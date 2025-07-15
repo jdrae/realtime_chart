@@ -70,7 +70,7 @@ unsubscribe with different id:
 - overflow
 - deque vs queue
   - queue.Queue and collections.deque serve different purposes. queue.Queue is intended for allowing different threads to communicate using queued messages/data, whereas collections.deque is simply intended as a data structure. That's why queue.Queue has methods like put_nowait(), get_nowait(), and join(), whereas collections.deque doesn't. queue.Queue isn't intended to be used as a collection, which is why it lacks the likes of the in operator.
-- eventlet
+- eventlet, threading, kafka 
 - singleton new vs init
 ## 6. Visualize data from Postgresql to Web
 
