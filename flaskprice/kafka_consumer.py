@@ -3,11 +3,10 @@ import json
 from kafka import KafkaConsumer
 
 from flaskprice.config import KAFKA_TOPIC, KAFKA_BOOTSTRAP_SERVERS, KAFKA_GROUP_ID
-from flaskprice.state import queues, clients
+from flaskprice.state import StreamManager
 
 
-def kafka_consumer_loop():
-
+def kafka_consumer_loop(stream_manager: StreamManager):
     consumer = KafkaConsumer(
         KAFKA_TOPIC,
         bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS,
@@ -20,18 +19,16 @@ def kafka_consumer_loop():
     for message in consumer:
         data = message.value  # str
         try:
-            assign_data(data)
+            data = json.loads(data)
+            if "data" not in data:
+                print("Received unexpected data:", data)
+                continue
+
+            stream = data["data"]["s"]
+            if stream not in stream_manager.get_stream_names():
+                raise ValueError("Invalid stream:", stream)
+
+            for sid in stream_manager.get_clients(stream):
+                stream_manager.put_payload(stream, {"sid": sid, "stream": stream, "data": data})
         except Exception as e:
             print(f"Error handling message: {e}")
-
-
-def assign_data(data: str):
-    data = json.loads(data)
-    if "data" not in data:
-        print("Received unexpected data:", data)
-        return
-    stream = data["data"]["s"]
-    if stream not in clients:
-        raise ValueError("Invalid stream:", stream)
-    for sid in clients[stream]:
-        queues[stream].put({"sid": sid, "stream": stream, "data": data})
