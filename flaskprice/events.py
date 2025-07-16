@@ -1,5 +1,5 @@
 from flask import request
-from flask_socketio import SocketIO
+from flask_socketio import SocketIO, join_room, leave_room
 
 from flaskprice.state import StreamManager
 
@@ -14,17 +14,17 @@ def register_events(socketio: SocketIO, stream_manager: StreamManager):
     def handle_subscribe(data):
         sid = request.sid
         stream = data.get("stream").upper()
-        print(f"[{sid}][{stream}] subscribe")
         if stream in stream_manager.get_stream_names():
-            stream_manager.add_client(stream, sid)
-            print(stream_manager.get_clients(stream))
+            join_room(room=stream)
         else:
             socketio.emit("error", {"message": f"invalid stream: {stream}"})
             print("error")
             return
+        print(f"[{sid}][{stream}] subscribed")
 
     @socketio.on("disconnect")
     def handle_disconnect():
         sid = request.sid
-        print(f"[{sid}] disconnect")
-        stream_manager.remove_client(request.sid)
+        for stream in stream_manager.get_stream_names():
+            leave_room(room=stream, sid=sid)
+        print(f"[{sid}] disconnected")

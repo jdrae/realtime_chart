@@ -12,7 +12,6 @@ def kafka_consumer_loop(stream_manager: StreamManager):
         bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS,
         value_deserializer=lambda x: json.loads(x.decode("utf-8")),
         group_id=KAFKA_GROUP_ID,
-        auto_offset_reset="latest",
     )
 
     print(f"Listening to topic: {KAFKA_TOPIC}, group: {KAFKA_GROUP_ID}")
@@ -28,7 +27,6 @@ def kafka_consumer_loop(stream_manager: StreamManager):
             if stream not in stream_manager.get_stream_names():
                 raise ValueError("Invalid stream:", stream)
 
-            for sid in stream_manager.get_clients(stream):
-                stream_manager.put_payload(stream, {"sid": sid, "stream": stream, "data": data})
+            stream_manager.put_payload(stream, {"stream": stream, "data": data})
         except Exception as e:
             print(f"Error handling message: {e}")
