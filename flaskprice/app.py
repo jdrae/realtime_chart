@@ -1,12 +1,13 @@
-import eventlet
+import logging
 
+import eventlet
 
 eventlet.monkey_patch()
 
 from flaskprice.dispatcher import dispatch_data
 from flaskprice.kafka_consumer import kafka_consumer_loop
+from flaskprice.logger import default_logger
 from flaskprice.state import StreamManager
-
 
 from flask import Flask
 from flask_socketio import SocketIO
@@ -14,6 +15,8 @@ import threading
 
 from flaskprice.config import CORS_ORIGINS, SUPPORTED_STREAMS, SOCKETIO_HOST, SOCKETIO_PORT
 from flaskprice.events import register_events
+
+logger = default_logger("flaskprice", logging.DEBUG)
 
 app = Flask(__name__)
 socketio = SocketIO(app, async_mode="eventlet", cors_allowed_origins=CORS_ORIGINS)
@@ -33,4 +36,5 @@ def main():
 
 
 if __name__ == "__main__":
+    logger.info(f"Starting app in {SOCKETIO_HOST}:{SOCKETIO_PORT}")
     main()
