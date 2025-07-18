@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 
 import environ
+from celery.schedules import crontab
 
 env = environ.Env()
 
@@ -32,6 +33,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     # custom
     "market.apps.MarketConfig",
+    # pips
+    "django_celery_beat",
 ]
 
 MIDDLEWARE = [
@@ -120,3 +123,11 @@ REST_FRAMEWORK = {
         "rest_framework.renderers.JSONRenderer",
     ]
 }
+
+# Celery
+CELERY_TIMEZONE = "UTC"
+CELERY_BROKER_URL = env("REDIS_URL")
+CELERY_RESULT_BACKEND = env("REDIS_URL")
+CELERY_ACCEPT_CONTENT = ["application/json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
