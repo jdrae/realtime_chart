@@ -1,23 +1,17 @@
 from django.db import models
 
 
-class Kline(models.Model):
+class AggregatedKline(models.Model):
     class Meta:
         _db = "market"
-        db_table = "kline_1s_processed"
-        managed = False
+        db_table = "aggregated_kline"
+        managed = True
 
-    id = models.BigAutoField(primary_key=True)
-
-    event_time = models.BigIntegerField()
+    interval = models.CharField(max_length=10)
     symbol = models.CharField(max_length=20)
-    is_closed = models.BooleanField()
-
     start_time = models.BigIntegerField()
-    close_time = models.BigIntegerField()
-
-    first_trade_id = models.BigIntegerField()
-    last_trade_id = models.BigIntegerField()
+    end_time = models.BigIntegerField()
+    row_count = models.IntegerField()
 
     open_price = models.DecimalField(max_digits=20, decimal_places=10)
     close_price = models.DecimalField(max_digits=20, decimal_places=10)
@@ -32,4 +26,7 @@ class Kline(models.Model):
     taker_volume_base = models.DecimalField(max_digits=30, decimal_places=10)
     taker_volume_quote = models.DecimalField(max_digits=30, decimal_places=10)
 
-    saved_at = models.DateTimeField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ("interval", "symbol", "start_time", "end_time")

@@ -1,10 +1,12 @@
-from datetime import datetime, timezone
+from datetime import datetime
 
 from celery import shared_task
 from django.utils import timezone
+from market.services.kline_aggregator import aggregate_all_symbols
 
 
 @shared_task
-def print_time():
-    now_utc = datetime.now(timezone.utc)
-    print(f"[UTC TIME] {now_utc.isoformat()}")
+def aggregate(interval):
+    now = datetime.now(timezone.utc)
+
+    aggregate_all_symbols(interval, now)

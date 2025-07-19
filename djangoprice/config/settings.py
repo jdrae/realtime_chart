@@ -70,12 +70,11 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
-
 DATABASES = {
-    "default": env.db(),
+    "default": env.db_url("DEFAULT_DATABASE_URL"),
+    "market": env.db_url("MARKET_DATABASE_URL"),
 }
-
+DATABASE_ROUTERS = ["config.dbrouter.DBRouter"]
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators

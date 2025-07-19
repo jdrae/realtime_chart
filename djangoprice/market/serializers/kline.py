@@ -1,10 +1,10 @@
-from market.models.kline import KLine
+from market.models.kline import Kline
 from rest_framework import serializers
 
 
 class KLineSerializer(serializers.ModelSerializer):
     class Meta:
-        model = KLine
+        model = Kline
         fields = [
             "id",
             "event_time",
