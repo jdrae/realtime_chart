@@ -3,9 +3,9 @@ from django.db import models
 
 class AggregatedKline(models.Model):
     class Meta:
-        _db = "market"
         db_table = "aggregated_kline"
         managed = True
+        unique_together = ("interval", "symbol", "start_time")
 
     interval = models.CharField(max_length=10)
     symbol = models.CharField(max_length=20)
@@ -27,6 +27,3 @@ class AggregatedKline(models.Model):
     taker_volume_quote = models.DecimalField(max_digits=30, decimal_places=10)
 
     created_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        unique_together = ("interval", "symbol", "start_time", "end_time")

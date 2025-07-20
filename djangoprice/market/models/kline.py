@@ -1,11 +1,12 @@
 from django.db import models
 
+from config.settings import TRUE_IF_TEST_ELSE_FALSE
+
 
 class Kline(models.Model):
     class Meta:
-        _db = "market"
         db_table = "kline_1s_processed"
-        managed = False
+        managed = TRUE_IF_TEST_ELSE_FALSE
 
     id = models.BigAutoField(primary_key=True)
 
