@@ -1,9 +1,9 @@
-from django.test import TestCase
-
-from market.models.kline import Kline
-from market.models.aggregated_kline import AggregatedKline
-from market.services import kline_aggregator
 from datetime import datetime, timezone
+
+from django.test import TestCase
+from market.models.aggregated_kline import AggregatedKline
+from market.models.kline import Kline
+from market.services import kline_aggregator
 
 
 class TestKlineAggregator(TestCase):
@@ -15,10 +15,8 @@ class TestKlineAggregator(TestCase):
         count = Kline.objects.count()
         print(f"Loaded Kline fixture: {count} rows")
 
-
     def test_fixture_loaded(self):
         self.assertGreater(Kline.objects.count(), 0)
-
 
     def test_get_time_range(self):
         now = datetime.fromtimestamp(1752905823, tz=timezone.utc)
@@ -31,34 +29,56 @@ class TestKlineAggregator(TestCase):
         expected_end = expected_start + 59 * 1000
         self.assertEqual(start_ts, expected_start)
         self.assertEqual(end_ts, expected_end)
+        self.assertGreater(now.timestamp() * 1000, end_ts)
 
+    def test_check_last_data_close_time_true_before(self):
+        kline = Kline.objects.order_by("-id").first()
+        now = datetime.fromtimestamp((kline.close_time // 1000) - 1, tz=timezone.utc)  # 1s before
+        symbol = kline.symbol
+        interval = "1m"
+
+        self.assertTrue(kline_aggregator.check_last_data_close_time(interval, symbol, now))
+
+    def test_check_last_data_close_time_true_after(self):
+        kline = Kline.objects.order_by("-id").first()
+        now = datetime.fromtimestamp((kline.close_time // 1000) + 1, tz=timezone.utc)  # 1s after
+        symbol = kline.symbol
+        interval = "1m"
+
+        self.assertTrue(kline_aggregator.check_last_data_close_time(interval, symbol, now))
+
+    def test_check_last_data_close_time_false(self):
+        kline = Kline.objects.order_by("-id").first()
+        now = datetime.fromtimestamp((kline.close_time // 1000) + 60, tz=timezone.utc)  # 60s after
+        symbol = kline.symbol
+        interval = "1m"
+
+        self.assertFalse(kline_aggregator.check_last_data_close_time(interval, symbol, now))
 
     def test_aggregate_kline_data(self):
-        kline = Kline.objects.order_by('-id').first()
+        kline = Kline.objects.order_by("-id").first()
         now = datetime.fromtimestamp(int(kline.event_time) // 1000, tz=timezone.utc)
         symbol = kline.symbol
         interval = "1m"
 
-        start_ts, end_ts = kline_aggregator.get_time_range(interval, now)
-        result = kline_aggregator.aggregate_kline_data(interval, symbol, start_ts, end_ts)
+        result = kline_aggregator.aggregate_kline_data(interval, symbol, now)
 
         self.assertIsNotNone(result)
         self.assertEqual(result.symbol, symbol)
         self.assertEqual(result.interval, interval)
+        start_ts, end_ts = kline_aggregator.get_time_range(interval, now)
         self.assertEqual(result.start_time, start_ts)
         self.assertEqual(result.end_time, end_ts)
         self.assertGreater(result.row_count, 0)
 
-
     def test_insert_kline_data(self):
-        kline = Kline.objects.order_by('-id').first()
+        kline = Kline.objects.order_by("-id").first()
         now = datetime.fromtimestamp(int(kline.event_time) // 1000, tz=timezone.utc)
         symbol = kline.symbol
         interval = "1m"
         AggregatedKline.objects.all().delete()
 
-        start_ts, end_ts = kline_aggregator.get_time_range(interval, now)
-        result = kline_aggregator.aggregate_kline_data(interval, symbol, start_ts, end_ts)
+        result = kline_aggregator.aggregate_kline_data(interval, symbol, now)
         kline_aggregator.insert_kline_data(result)
 
         self.assertEqual(AggregatedKline.objects.count(), 1)
@@ -66,15 +86,24 @@ class TestKlineAggregator(TestCase):
         self.assertEqual(agg.symbol, symbol)
         self.assertEqual(agg.interval, interval)
 
-
-    def test_aggregate_all_symbols(self):
-        kline = Kline.objects.order_by('-id').first()
-        now = datetime.fromtimestamp(int(kline.event_time) // 1000, tz=timezone.utc)
+    def test_check_and_insert_success(self):
+        kline = Kline.objects.order_by("-id").first()
+        now = datetime.fromtimestamp(int(kline.close_time) // 1000, tz=timezone.utc)
+        symbol = kline.symbol
         interval = "1m"
         AggregatedKline.objects.all().delete()
 
-        kline_aggregator.aggregate_all_symbols(interval, now)
-        
-        symbols = set(AggregatedKline.objects.values_list("symbol", flat=True))
-        self.assertIn("BTCUSDT", symbols)
-        self.assertEqual(AggregatedKline.objects.filter(symbol="BTCUSDT").count(), 1)
+        is_done = kline_aggregator.check_and_insert(interval, symbol, now)
+
+        self.assertTrue(is_done)
+
+    def test_check_and_insert_false_no_symbol(self):
+        kline = Kline.objects.order_by("-id").first()
+        now = datetime.fromtimestamp(int(kline.close_time) // 1000, tz=timezone.utc)
+        symbol = "SAMPLE_SYMBOL"
+        interval = "1m"
+        AggregatedKline.objects.all().delete()
+
+        is_done = kline_aggregator.check_and_insert(interval, symbol, now)
+
+        self.assertFalse(is_done)

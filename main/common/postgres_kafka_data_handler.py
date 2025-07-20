@@ -10,7 +10,7 @@ class PostgresKafkaDataHandler(KafkaDataHandler):
         self.inserter_failed = inserter_failed
 
     def handle(self, data):
-        self.inserter_raw.add(self.mapper.get_raw(data).values_insert())
+        # self.inserter_raw.add(self.mapper.get_raw(data).values_insert()) # TODO: implement deleting data periodically
         try:
             self.inserter_processed.add(self.mapper.get_processed(data).values_insert())
         except Exception as e:
