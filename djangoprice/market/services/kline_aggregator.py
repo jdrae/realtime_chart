@@ -30,7 +30,8 @@ def aggregate_all_symbols(interval: str, now):
     for symbol in SUPPORTED_SYMBOLS:
         result = aggregate_kline_data(interval, symbol, start_ts, end_ts)
         if result is None:
-            print(f"Warning: no data in {symbol} ({start_ts} to {end_ts})")
+            print(f"Warning: no data in {symbol}. interval: {interval}, time: {now})")
+            continue
         insert_kline_data(result)
 
 
