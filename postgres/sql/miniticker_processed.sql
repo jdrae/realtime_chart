@@ -8,5 +8,5 @@ CREATE TABLE IF NOT EXISTS miniticker_processed (
     low_price NUMERIC,          -- "l"
     volume_base NUMERIC,        -- "v"
     volume_quote NUMERIC,       -- "q"
-    saved_at TIMESTAMP DEFAULT (NOW() AT TIME ZONE 'UTC')
+    created_at TIMESTAMP DEFAULT (NOW() AT TIME ZONE 'UTC')
 );

@@ -6,20 +6,6 @@ from psycopg2 import pool
 from psycopg2.extras import execute_values
 
 
-class MockPostgresClient:
-    def __init__(self):
-        pass
-
-    def connect(self, dbname, user, password, host, port):  # TODO: dsn
-        print("connected")
-
-    def insert_many(self, query: str, data: list[tuple]):
-        print(query, len(data))
-
-    def close(self):
-        print("db closed")
-
-
 class PostgresClient:
     def __init__(self):  # TODO: dsn
         self.logger = logging.getLogger(__name__ + ".PostgresClient")
@@ -28,7 +14,7 @@ class PostgresClient:
     def connect(self, dbname, user, password, host, port):
         self.logger.info("Connecting to Postgres")
         self.pool = pool.ThreadedConnectionPool(
-            minconn=3, maxconn=3, dbname=dbname, user=user, password=password, host=host, port=port
+            minconn=3, maxconn=6, dbname=dbname, user=user, password=password, host=host, port=port
         )
         self.logger.info("Connected to Postgres")
 
@@ -58,12 +44,13 @@ class PostgresClient:
 
 
 class BatchInserter:
-    def __init__(self, db_client, query, batch_size):
+    def __init__(self, db_client, query, batch_size, checkpoint_handler=None):
         self.logger = logging.getLogger(__name__ + ".BatchInserter")
 
         self.db_client = db_client
         self.query = query
         self.batch_size = batch_size
+        self.checkpoint_handler = checkpoint_handler
 
         self.buffer = []
         self.lock = threading.Lock()
@@ -79,7 +66,8 @@ class BatchInserter:
         # TODO: implement flush_thread to check last flush time
         self.logger.info("BatchInserter started")
 
-    def add(self, data: dict):
+    def add(self, data: tuple):
+        # data is mapped and converted as insert value from data handler
         with self.lock:
             self.buffer.append(data)
             if len(self.buffer) >= self.batch_size:
@@ -98,6 +86,8 @@ class BatchInserter:
                 # queue timeout is necessary when process ended without any data
                 batch = self.flush_queue.get(timeout=3)
                 self.db_client.insert_many(self.query, batch)
+                if self.checkpoint_handler:
+                    self.checkpoint_handler.insert_checkpoint(batch)
             except queue.Empty:
                 continue
 

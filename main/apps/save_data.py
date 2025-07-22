@@ -5,6 +5,7 @@ import os
 import signal
 import sys
 
+from main.common.checkpoint_handler import KlineCheckpointHandler
 from main.common.entity import *
 from main.common.entity_mapper import get_json_entity_mapper
 from main.common.kafka_consumer import KafkaConsumerManager
@@ -42,10 +43,13 @@ def save_data(stream):
     mapper = get_json_entity_mapper(stream)
     target_class = mapper.get_target_class()
 
+    checkpoint_handler = KlineCheckpointHandler(db_client, table=config[stream]["POSTGRES_TABLE_CHECKPOINT"])
+
     inserter_processed = BatchInserter(
         db_client,
         query=target_class.sql_insert(config[stream]["POSTGRES_TABLE_PROCESSED"]),
         batch_size=60,
+        checkpoint_handler=checkpoint_handler,
     )
     inserter_raw = BatchInserter(
         db_client, query=Raw.sql_insert(config[stream]["POSTGRES_TABLE_RAW"]), batch_size=60

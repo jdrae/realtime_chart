@@ -31,9 +31,9 @@ class Entity:
 class Raw(Entity):
     payload: str
     id: Optional[str] = None
-    saved_at: Optional[str] = None
+    created_at: Optional[str] = None
 
-    EXCLUDE_INSERT_COLS = {"id", "saved_at"}
+    EXCLUDE_INSERT_COLS = {"id", "created_at"}
 
 
 @dataclass
@@ -41,9 +41,9 @@ class Failed(Entity):
     payload: str
     error: str
     id: Optional[str] = None
-    saved_at: Optional[str] = None
+    created_at: Optional[str] = None
 
-    EXCLUDE_INSERT_COLS = {"id", "saved_at"}
+    EXCLUDE_INSERT_COLS = {"id", "created_at"}
 
 
 @dataclass
@@ -58,8 +58,8 @@ class MiniTicker(Entity):
     volume_quote: str
 
     id: Optional[str] = None
-    saved_at: Optional[str] = None
-    EXCLUDE_INSERT_COLS = {"id", "saved_at"}
+    created_at: Optional[str] = None
+    EXCLUDE_INSERT_COLS = {"id", "created_at"}
 
 
 @dataclass
@@ -82,5 +82,25 @@ class Kline(Entity):
     taker_volume_quote: str
 
     id: Optional[str] = None
-    saved_at: Optional[str] = None
-    EXCLUDE_INSERT_COLS = {"id", "saved_at"}
+    created_at: Optional[str] = None
+    EXCLUDE_INSERT_COLS = {"id", "created_at"}
+
+
+@dataclass
+class AggregatedKlineCheckpoint(Entity):
+    symbol: str
+    first_time: int
+    last_time: int
+    is_1m_aggregated: Optional[bool] = None
+    is_5m_aggregated: Optional[bool] = None
+    is_15m_aggregated: Optional[bool] = None
+
+    id: Optional[str] = None
+    created_at: Optional[str] = None
+    EXCLUDE_INSERT_COLS = {
+        "id",
+        "created_at",
+        "is_1m_aggregated",
+        "is_5m_aggregated",
+        "is_15m_aggregated",
+    }

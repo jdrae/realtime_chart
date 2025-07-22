@@ -38,7 +38,7 @@ class Migration(migrations.Migration):
                     "taker_volume_quote",
                     models.DecimalField(decimal_places=10, max_digits=30),
                 ),
-                ("saved_at", models.DateTimeField()),
+                ("created_at", models.DateTimeField()),
             ],
             options={
                 "db_table": "kline_1s_processed",

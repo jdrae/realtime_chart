@@ -16,5 +16,8 @@ CREATE TABLE IF NOT EXISTS kline_1s_processed (
     volume_quote       NUMERIC,            -- "k.q": Quote asset volume
     taker_volume_base NUMERIC,            -- "k.V": Taker buy base asset volume
     taker_volume_quote NUMERIC,           -- "k.Q": Taker buy quote asset volume
-    saved_at TIMESTAMP DEFAULT (NOW() AT TIME ZONE 'UTC')
+    created_at TIMESTAMP DEFAULT (NOW() AT TIME ZONE 'UTC')
 );
+
+CREATE INDEX idx_kline_1s_processed_start_time ON kline_1s_processed (start_time);
+CREATE INDEX idx_kline_1s_processed_close_time ON kline_1s_processed (close_time);

@@ -23,5 +23,5 @@ class KLineSerializer(serializers.ModelSerializer):
             "volume_quote",
             "taker_volume_base",
             "taker_volume_quote",
-            "saved_at",
+            "created_at",
         ]

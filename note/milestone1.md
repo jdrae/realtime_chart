@@ -73,5 +73,10 @@ unsubscribe with different id:
 - eventlet, threading, kafka 
 - singleton new vs init
 ## 6. Visualize data from Postgresql to Web
-
+- endpoints for frontend
+  - initial
+  - periodic
+- aggregate raw data batch
+  - timing is not a solution. need to use another db
+- window calculation from aggregated data
 ## 7. Modify past data in Postgresql (?)

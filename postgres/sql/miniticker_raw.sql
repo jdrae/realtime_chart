@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS miniticker_raw (
     id SERIAL PRIMARY KEY,
     payload JSONB NOT NULL,
-    saved_at TIMESTAMP DEFAULT (NOW() AT TIME ZONE 'UTC')
+    created_at TIMESTAMP DEFAULT (NOW() AT TIME ZONE 'UTC')
 );

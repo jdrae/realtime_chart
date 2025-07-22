@@ -33,4 +33,4 @@ class Kline(models.Model):
     taker_volume_base = models.DecimalField(max_digits=30, decimal_places=10)
     taker_volume_quote = models.DecimalField(max_digits=30, decimal_places=10)
 
-    saved_at = models.DateTimeField()
+    created_at = models.DateTimeField()
