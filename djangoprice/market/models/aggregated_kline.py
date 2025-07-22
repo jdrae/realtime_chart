@@ -1,10 +1,12 @@
 from django.db import models
 
+from config.settings import TRUE_IF_TEST_ELSE_FALSE
+
 
 class AggregatedKline(models.Model):
     class Meta:
         db_table = "aggregated_kline"
-        managed = True
+        managed = TRUE_IF_TEST_ELSE_FALSE
         unique_together = ("interval", "symbol", "start_time")
 
     interval = models.CharField(max_length=10)
