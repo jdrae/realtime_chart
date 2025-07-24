@@ -41,5 +41,4 @@ class KlineCheckpointHandler(CheckpointHandler):
                 ).values_insert()
             )
 
-        self.logger.debug(checkpoint_row)
         self.db_client.insert_many(self.query, checkpoint_row)

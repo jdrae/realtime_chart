@@ -19,7 +19,7 @@ CREATE TABLE aggregated_kline (
     taker_volume_base NUMERIC(30, 10) NOT NULL,
     taker_volume_quote NUMERIC(30, 10) NOT NULL,
 
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP DEFAULT (NOW() AT TIME ZONE 'UTC')
 
     CONSTRAINT unique_symbol_interval_start_time UNIQUE (symbol, interval, start_time)
 );

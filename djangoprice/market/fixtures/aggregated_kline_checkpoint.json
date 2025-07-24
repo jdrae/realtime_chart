@@ -1,0 +1,366 @@
+[
+    {
+        "model": "market.aggregatedklinecheckpoint",
+        "pk": 21,
+        "fields": {
+            "symbol": "BTCUSDT",
+            "first_time": "1753325942000",
+            "last_time": "1753325971999",
+            "is_1m_aggregated": false,
+            "is_5m_aggregated": false,
+            "is_15m_aggregated": false,
+            "created_at": "2025-07-24T02:59:29.837892Z"
+        }
+    },
+    {
+        "model": "market.aggregatedklinecheckpoint",
+        "pk": 22,
+        "fields": {
+            "symbol": "ETHUSDT",
+            "first_time": "1753325942000",
+            "last_time": "1753325971999",
+            "is_1m_aggregated": false,
+            "is_5m_aggregated": false,
+            "is_15m_aggregated": false,
+            "created_at": "2025-07-24T02:59:29.837892Z"
+        }
+    },
+    {
+        "model": "market.aggregatedklinecheckpoint",
+        "pk": 23,
+        "fields": {
+            "symbol": "BTCUSDT",
+            "first_time": "1753325972000",
+            "last_time": "1753326001999",
+            "is_1m_aggregated": false,
+            "is_5m_aggregated": false,
+            "is_15m_aggregated": false,
+            "created_at": "2025-07-24T02:59:59.843568Z"
+        }
+    },
+    {
+        "model": "market.aggregatedklinecheckpoint",
+        "pk": 24,
+        "fields": {
+            "symbol": "ETHUSDT",
+            "first_time": "1753325972000",
+            "last_time": "1753326001999",
+            "is_1m_aggregated": false,
+            "is_5m_aggregated": false,
+            "is_15m_aggregated": false,
+            "created_at": "2025-07-24T02:59:59.843568Z"
+        }
+    },
+    {
+        "model": "market.aggregatedklinecheckpoint",
+        "pk": 25,
+        "fields": {
+            "symbol": "BTCUSDT",
+            "first_time": "1753326002000",
+            "last_time": "1753326031999",
+            "is_1m_aggregated": false,
+            "is_5m_aggregated": false,
+            "is_15m_aggregated": false,
+            "created_at": "2025-07-24T03:00:29.846707Z"
+        }
+    },
+    {
+        "model": "market.aggregatedklinecheckpoint",
+        "pk": 26,
+        "fields": {
+            "symbol": "ETHUSDT",
+            "first_time": "1753326002000",
+            "last_time": "1753326031999",
+            "is_1m_aggregated": false,
+            "is_5m_aggregated": false,
+            "is_15m_aggregated": false,
+            "created_at": "2025-07-24T03:00:29.846707Z"
+        }
+    },
+    {
+        "model": "market.aggregatedklinecheckpoint",
+        "pk": 27,
+        "fields": {
+            "symbol": "BTCUSDT",
+            "first_time": "1753326032000",
+            "last_time": "1753326061999",
+            "is_1m_aggregated": false,
+            "is_5m_aggregated": false,
+            "is_15m_aggregated": false,
+            "created_at": "2025-07-24T03:00:59.842514Z"
+        }
+    },
+    {
+        "model": "market.aggregatedklinecheckpoint",
+        "pk": 28,
+        "fields": {
+            "symbol": "ETHUSDT",
+            "first_time": "1753326032000",
+            "last_time": "1753326061999",
+            "is_1m_aggregated": false,
+            "is_5m_aggregated": false,
+            "is_15m_aggregated": false,
+            "created_at": "2025-07-24T03:00:59.842514Z"
+        }
+    },
+    {
+        "model": "market.aggregatedklinecheckpoint",
+        "pk": 29,
+        "fields": {
+            "symbol": "BTCUSDT",
+            "first_time": "1753326062000",
+            "last_time": "1753326091999",
+            "is_1m_aggregated": false,
+            "is_5m_aggregated": false,
+            "is_15m_aggregated": false,
+            "created_at": "2025-07-24T03:01:29.860088Z"
+        }
+    },
+    {
+        "model": "market.aggregatedklinecheckpoint",
+        "pk": 30,
+        "fields": {
+            "symbol": "ETHUSDT",
+            "first_time": "1753326062000",
+            "last_time": "1753326091999",
+            "is_1m_aggregated": false,
+            "is_5m_aggregated": false,
+            "is_15m_aggregated": false,
+            "created_at": "2025-07-24T03:01:29.860088Z"
+        }
+    },
+    {
+        "model": "market.aggregatedklinecheckpoint",
+        "pk": 31,
+        "fields": {
+            "symbol": "BTCUSDT",
+            "first_time": "1753326092000",
+            "last_time": "1753326121999",
+            "is_1m_aggregated": false,
+            "is_5m_aggregated": false,
+            "is_15m_aggregated": false,
+            "created_at": "2025-07-24T03:01:59.853886Z"
+        }
+    },
+    {
+        "model": "market.aggregatedklinecheckpoint",
+        "pk": 32,
+        "fields": {
+            "symbol": "ETHUSDT",
+            "first_time": "1753326092000",
+            "last_time": "1753326121999",
+            "is_1m_aggregated": false,
+            "is_5m_aggregated": false,
+            "is_15m_aggregated": false,
+            "created_at": "2025-07-24T03:01:59.853886Z"
+        }
+    },
+    {
+        "model": "market.aggregatedklinecheckpoint",
+        "pk": 33,
+        "fields": {
+            "symbol": "BTCUSDT",
+            "first_time": "1753326122000",
+            "last_time": "1753326151999",
+            "is_1m_aggregated": false,
+            "is_5m_aggregated": false,
+            "is_15m_aggregated": false,
+            "created_at": "2025-07-24T03:02:29.863827Z"
+        }
+    },
+    {
+        "model": "market.aggregatedklinecheckpoint",
+        "pk": 34,
+        "fields": {
+            "symbol": "ETHUSDT",
+            "first_time": "1753326122000",
+            "last_time": "1753326151999",
+            "is_1m_aggregated": false,
+            "is_5m_aggregated": false,
+            "is_15m_aggregated": false,
+            "created_at": "2025-07-24T03:02:29.863827Z"
+        }
+    },
+    {
+        "model": "market.aggregatedklinecheckpoint",
+        "pk": 35,
+        "fields": {
+            "symbol": "BTCUSDT",
+            "first_time": "1753326152000",
+            "last_time": "1753326181999",
+            "is_1m_aggregated": false,
+            "is_5m_aggregated": false,
+            "is_15m_aggregated": false,
+            "created_at": "2025-07-24T03:02:59.866005Z"
+        }
+    },
+    {
+        "model": "market.aggregatedklinecheckpoint",
+        "pk": 36,
+        "fields": {
+            "symbol": "ETHUSDT",
+            "first_time": "1753326152000",
+            "last_time": "1753326181999",
+            "is_1m_aggregated": false,
+            "is_5m_aggregated": false,
+            "is_15m_aggregated": false,
+            "created_at": "2025-07-24T03:02:59.866005Z"
+        }
+    },
+    {
+        "model": "market.aggregatedklinecheckpoint",
+        "pk": 37,
+        "fields": {
+            "symbol": "BTCUSDT",
+            "first_time": "1753326182000",
+            "last_time": "1753326211999",
+            "is_1m_aggregated": false,
+            "is_5m_aggregated": false,
+            "is_15m_aggregated": false,
+            "created_at": "2025-07-24T03:03:29.827775Z"
+        }
+    },
+    {
+        "model": "market.aggregatedklinecheckpoint",
+        "pk": 38,
+        "fields": {
+            "symbol": "ETHUSDT",
+            "first_time": "1753326182000",
+            "last_time": "1753326211999",
+            "is_1m_aggregated": false,
+            "is_5m_aggregated": false,
+            "is_15m_aggregated": false,
+            "created_at": "2025-07-24T03:03:29.827775Z"
+        }
+    },
+    {
+        "model": "market.aggregatedklinecheckpoint",
+        "pk": 39,
+        "fields": {
+            "symbol": "BTCUSDT",
+            "first_time": "1753326212000",
+            "last_time": "1753326241999",
+            "is_1m_aggregated": false,
+            "is_5m_aggregated": false,
+            "is_15m_aggregated": false,
+            "created_at": "2025-07-24T03:03:59.868700Z"
+        }
+    },
+    {
+        "model": "market.aggregatedklinecheckpoint",
+        "pk": 40,
+        "fields": {
+            "symbol": "ETHUSDT",
+            "first_time": "1753326212000",
+            "last_time": "1753326241999",
+            "is_1m_aggregated": false,
+            "is_5m_aggregated": false,
+            "is_15m_aggregated": false,
+            "created_at": "2025-07-24T03:03:59.868700Z"
+        }
+    },
+    {
+        "model": "market.aggregatedklinecheckpoint",
+        "pk": 41,
+        "fields": {
+            "symbol": "BTCUSDT",
+            "first_time": "1753326242000",
+            "last_time": "1753326271999",
+            "is_1m_aggregated": false,
+            "is_5m_aggregated": false,
+            "is_15m_aggregated": false,
+            "created_at": "2025-07-24T03:04:29.877103Z"
+        }
+    },
+    {
+        "model": "market.aggregatedklinecheckpoint",
+        "pk": 42,
+        "fields": {
+            "symbol": "ETHUSDT",
+            "first_time": "1753326242000",
+            "last_time": "1753326271999",
+            "is_1m_aggregated": false,
+            "is_5m_aggregated": false,
+            "is_15m_aggregated": false,
+            "created_at": "2025-07-24T03:04:29.877103Z"
+        }
+    },
+    {
+        "model": "market.aggregatedklinecheckpoint",
+        "pk": 43,
+        "fields": {
+            "symbol": "BTCUSDT",
+            "first_time": "1753326272000",
+            "last_time": "1753326301999",
+            "is_1m_aggregated": false,
+            "is_5m_aggregated": false,
+            "is_15m_aggregated": false,
+            "created_at": "2025-07-24T03:04:59.849117Z"
+        }
+    },
+    {
+        "model": "market.aggregatedklinecheckpoint",
+        "pk": 44,
+        "fields": {
+            "symbol": "ETHUSDT",
+            "first_time": "1753326272000",
+            "last_time": "1753326301999",
+            "is_1m_aggregated": false,
+            "is_5m_aggregated": false,
+            "is_15m_aggregated": false,
+            "created_at": "2025-07-24T03:04:59.849117Z"
+        }
+    },
+    {
+        "model": "market.aggregatedklinecheckpoint",
+        "pk": 45,
+        "fields": {
+            "symbol": "BTCUSDT",
+            "first_time": "1753326302000",
+            "last_time": "1753326331999",
+            "is_1m_aggregated": false,
+            "is_5m_aggregated": false,
+            "is_15m_aggregated": false,
+            "created_at": "2025-07-24T03:05:29.882519Z"
+        }
+    },
+    {
+        "model": "market.aggregatedklinecheckpoint",
+        "pk": 46,
+        "fields": {
+            "symbol": "ETHUSDT",
+            "first_time": "1753326302000",
+            "last_time": "1753326331999",
+            "is_1m_aggregated": false,
+            "is_5m_aggregated": false,
+            "is_15m_aggregated": false,
+            "created_at": "2025-07-24T03:05:29.882519Z"
+        }
+    },
+    {
+        "model": "market.aggregatedklinecheckpoint",
+        "pk": 47,
+        "fields": {
+            "symbol": "BTCUSDT",
+            "first_time": "1753326332000",
+            "last_time": "1753326345999",
+            "is_1m_aggregated": false,
+            "is_5m_aggregated": false,
+            "is_15m_aggregated": false,
+            "created_at": "2025-07-24T03:05:50.223299Z"
+        }
+    },
+    {
+        "model": "market.aggregatedklinecheckpoint",
+        "pk": 48,
+        "fields": {
+            "symbol": "ETHUSDT",
+            "first_time": "1753326332000",
+            "last_time": "1753326345999",
+            "is_1m_aggregated": false,
+            "is_5m_aggregated": false,
+            "is_15m_aggregated": false,
+            "created_at": "2025-07-24T03:05:50.223299Z"
+        }
+    }
+]

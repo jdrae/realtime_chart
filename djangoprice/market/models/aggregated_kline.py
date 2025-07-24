@@ -12,7 +12,7 @@ class AggregatedKline(models.Model):
     interval = models.CharField(max_length=10)
     symbol = models.CharField(max_length=20)
     start_time = models.BigIntegerField()
-    end_time = models.BigIntegerField()
+    close_time = models.BigIntegerField()
     row_count = models.IntegerField()
 
     open_price = models.DecimalField(max_digits=20, decimal_places=10)

@@ -4,10 +4,10 @@ CREATE TABLE aggregated_kline_checkpoint
     symbol VARCHAR(20) NOT NULL,
     first_time        BIGINT NOT NULL,
     last_time        BIGINT NOT NULL,
-    is_1m_aggregated  BOOLEAN                  DEFAULT FALSE,
-    is_5m_aggregated  BOOLEAN                  DEFAULT FALSE,
-    is_15m_aggregated BOOLEAN                  DEFAULT FALSE,
-    created_at        TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    is_1m_aggregated  SMALLINT                  DEFAULT 0,
+    is_5m_aggregated  SMALLINT                  DEFAULT 0,
+    is_15m_aggregated  SMALLINT                  DEFAULT 0,
+    created_at TIMESTAMP DEFAULT (NOW() AT TIME ZONE 'UTC'),
 
     CONSTRAINT unique_symbol_first_time_last_time UNIQUE (symbol, first_time, last_time)
 );

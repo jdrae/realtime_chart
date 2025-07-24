@@ -20,6 +20,17 @@ def get_interval_seconds(interval: str) -> int:
         raise ValueError(f"Unsupported interval: {interval}")
 
 
+def get_interval_columns(interval: str):
+    if interval == "1m":
+        return "is_1m_aggregated"
+    elif interval == "5m":
+        return "is_5m_aggregated"
+    elif interval == "15m":
+        return "is_15m_aggregated"
+    else:
+        raise ValueError(f"Unsupported interval: {interval}")
+
+
 def get_interval_ranges(interval: str, first_ms: int, last_ms: int) -> list:
     # Split given time range(from first_ms to last_ms) into interval window,
     # considering each split should start and end with seconds=0, milliseconds=0.

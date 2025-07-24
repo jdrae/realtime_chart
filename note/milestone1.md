@@ -78,5 +78,6 @@ unsubscribe with different id:
   - periodic
 - aggregate raw data batch
   - timing is not a solution. need to use another db
+- round milliseconds to prevent overflow
 - window calculation from aggregated data
 ## 7. Modify past data in Postgresql (?)
