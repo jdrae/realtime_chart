@@ -1,6 +1,8 @@
 import logging
 import queue
 import threading
+import time
+from datetime import datetime
 
 from psycopg2 import pool
 from psycopg2.extras import execute_values
@@ -44,33 +46,36 @@ class PostgresClient:
 
 
 class BatchInserter:
-    def __init__(self, db_client, query, batch_size, checkpoint_handler=None):
+    def __init__(self, db_client, query, max_batch_size, interval_seconds=0, checkpoint_handler=None):
         self.logger = logging.getLogger(__name__ + ".BatchInserter")
 
         self.db_client = db_client
         self.query = query
-        self.batch_size = batch_size
+        self.max_batch_size = max_batch_size
+        self.interval_seconds = interval_seconds
         self.checkpoint_handler = checkpoint_handler
 
         self.buffer = []
         self.lock = threading.Lock()
         self.flush_queue = queue.Queue()
         self.running = None
+        self.flush_thread = None
         self.insert_thread = None
 
     def start(self):
         self.logger.info("Starting BatchInserter...")
         self.running = True
+        self.flush_thread = threading.Thread(target=self._flush_worker, daemon=True)
         self.insert_thread = threading.Thread(target=self._insert_worker, daemon=False)
+        self.flush_thread.start()
         self.insert_thread.start()
-        # TODO: implement flush_thread to check last flush time
         self.logger.info("BatchInserter started")
 
     def add(self, data: tuple):
         # data is mapped and converted as insert value from data handler
         with self.lock:
             self.buffer.append(data)
-            if len(self.buffer) >= self.batch_size:
+            if len(self.buffer) >= self.max_batch_size:
                 self._flush()
 
     def _flush(self):
@@ -79,6 +84,17 @@ class BatchInserter:
         batch = self.buffer[:]
         self.buffer.clear()
         self.flush_queue.put(batch)
+
+    def _flush_worker(self):
+        if self.interval_seconds == 0:
+            # _flush_worker ends immediately
+            return
+        while self.running:
+            now = int(datetime.now().timestamp())
+            sleep_duration = ((now // self.interval_seconds) + 1) * self.interval_seconds - now
+            time.sleep(sleep_duration)
+            with self.lock:
+                self._flush()
 
     def _insert_worker(self):
         while self.running or not self.flush_queue.empty():
@@ -92,10 +108,10 @@ class BatchInserter:
                 continue
 
     def stop(self):
+        self.logger.info("Stopping BatchInserter...")
         with self.lock:
             self._flush()
-
-        self.logger.info("Stopping BatchInserter...")
         self.running = False
+        self.flush_thread.join()
         self.insert_thread.join()
         self.logger.info("BatchInserter stopped")

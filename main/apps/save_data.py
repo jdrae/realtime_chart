@@ -48,16 +48,19 @@ def save_data(stream):
     inserter_processed = BatchInserter(
         db_client,
         query=target_class.sql_insert(config[stream]["POSTGRES_TABLE_PROCESSED"]),
-        batch_size=60,
+        max_batch_size=180,
+        interval_seconds=60,
         checkpoint_handler=checkpoint_handler,
     )
     inserter_raw = BatchInserter(
-        db_client, query=Raw.sql_insert(config[stream]["POSTGRES_TABLE_RAW"]), batch_size=60
+        db_client,
+        query=Raw.sql_insert(config[stream]["POSTGRES_TABLE_RAW"]),
+        max_batch_size=60,
     )
     inserter_failed = BatchInserter(
         db_client,
         query=Failed.sql_insert(config[stream]["POSTGRES_TABLE_FAILED"]),
-        batch_size=1,
+        max_batch_size=1,
     )
 
     handler = PostgresKafkaDataHandler(
