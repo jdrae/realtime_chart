@@ -8,7 +8,6 @@ from market.services.kline_aggregator import (
     check_and_insert,
     update_checkpoint,
 )
-from market.services.time_utils import is_valid_range
 
 
 class TestKlineAggregator(TestCase):
@@ -94,13 +93,11 @@ class TestKlineAggregator(TestCase):
         start_ms = 1753326000000
         end_ms = 1753326060000
 
-        update_checkpoint(interval, symbol, start_ms, end_ms, CheckpointEnum.AGGREGATED)
-
         checkpoints = AggregatedKlineCheckpoint.objects.filter(
-            symbol=symbol,
-            first_time__gte=start_ms,
-            last_time__lte=end_ms,
+            symbol=symbol, first_time__gte=start_ms, last_time__lte=end_ms
         )
+        update_checkpoint(interval, checkpoints, CheckpointEnum.AGGREGATED)
+
         for checkpoint in checkpoints:
             self.assertEqual(checkpoint.is_1m_aggregated, CheckpointEnum.AGGREGATED)
 
@@ -109,15 +106,83 @@ class TestKlineAggregator(TestCase):
         qs = get_pending_checkpoint("is_1m_aggregated")
         arranged_checkpoints = arrange_checkpoint(interval, qs)
         symbol = "BTCUSDT"
+        left_invalid_range_end_time = 1753326000000
+        valid_range_start_time = 1753326000000
+        valid_range_end_time = 1753326300000
+        right_invalid_range_start_time = 1753326300000
 
         successful_insert = check_and_insert(interval, symbol, arranged_checkpoints[symbol])
         self.assertEqual(successful_insert, self.valid_1m_ranges)
+
+        # Aggregated
+        checkpoints = AggregatedKlineCheckpoint.objects.filter(
+            symbol=symbol, first_time__gte=valid_range_start_time, last_time__lte=valid_range_end_time
+        )
+        for checkpoint in checkpoints:
+            self.assertEqual(checkpoint.is_1m_aggregated, CheckpointEnum.AGGREGATED)
+
+        # Error
+        checkpoints = AggregatedKlineCheckpoint.objects.filter(
+            symbol=symbol, first_time__lt=left_invalid_range_end_time
+        )
+        for checkpoint in checkpoints:
+            self.assertEqual(checkpoint.is_1m_aggregated, CheckpointEnum.ERROR)
+
+        # Pending
+        checkpoints = AggregatedKlineCheckpoint.objects.filter(
+            symbol=symbol, last_time__gt=right_invalid_range_start_time
+        )
+        for checkpoint in checkpoints:
+            self.assertEqual(checkpoint.is_1m_aggregated, CheckpointEnum.PENDING)
 
     def test_check_and_insert_5m(self):
         interval = "5m"
         qs = get_pending_checkpoint("is_5m_aggregated")
         arranged_checkpoints = arrange_checkpoint(interval, qs)
         symbol = "ETHUSDT"
+        left_invalid_range_end_time = 1753326000000
+        valid_range_start_time = 1753326000000
+        valid_range_end_time = 1753326300000
+        right_invalid_range_start_time = 1753326300000
 
         successful_insert = check_and_insert(interval, symbol, arranged_checkpoints[symbol])
         self.assertEqual(successful_insert, self.valid_5m_ranges)
+
+        # Aggregated
+        checkpoints = AggregatedKlineCheckpoint.objects.filter(
+            symbol=symbol, first_time__gte=valid_range_start_time, last_time__lte=valid_range_end_time
+        )
+        for checkpoint in checkpoints:
+            self.assertEqual(checkpoint.is_5m_aggregated, CheckpointEnum.AGGREGATED)
+
+        # Error
+        checkpoints = AggregatedKlineCheckpoint.objects.filter(
+            symbol=symbol, first_time__lt=left_invalid_range_end_time
+        )
+        for checkpoint in checkpoints:
+            self.assertEqual(checkpoint.is_5m_aggregated, CheckpointEnum.ERROR)
+
+        # Pending
+        checkpoints = AggregatedKlineCheckpoint.objects.filter(
+            symbol=symbol, last_time__gt=right_invalid_range_start_time
+        )
+        for checkpoint in checkpoints:
+            self.assertEqual(checkpoint.is_5m_aggregated, CheckpointEnum.PENDING)
+
+    def test_check_and_insert_15m(self):
+        interval = "15m"
+        qs = get_pending_checkpoint("is_15m_aggregated")
+        arranged_checkpoints = arrange_checkpoint(interval, qs)
+        symbol = "ETHUSDT"
+        left_invalid_range_end_time = 1753326000000
+        valid_range_start_time = 1753326000000
+        valid_range_end_time = 1753326300000
+        right_invalid_range_start_time = 1753326300000
+
+        successful_insert = check_and_insert(interval, symbol, arranged_checkpoints[symbol])
+        self.assertEqual(successful_insert, 0)
+
+        # Pending
+        checkpoints = AggregatedKlineCheckpoint.objects.filter(symbol=symbol)
+        for checkpoint in checkpoints:
+            self.assertEqual(checkpoint.is_15m_aggregated, CheckpointEnum.PENDING)

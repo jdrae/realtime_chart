@@ -165,3 +165,10 @@ class TestKlineAggregator(TestCase):
         end_ms = self._10m0s0ms
 
         self.assertTrue(is_valid_range(interval, start_ms, end_ms))
+
+    def test_is_valid_range_10(self):
+        interval = "5m"
+        start_ms = self._6m59s999ms
+        end_ms = self._10m0s0ms
+
+        self.assertFalse(is_valid_range(interval, start_ms, end_ms))
