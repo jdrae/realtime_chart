@@ -1,7 +1,10 @@
 from django.urls import path
 
-from market.views.api import KLineAPIView
+from market.serializers.aggregated_kline import AggregatedKLineSerializer
+from market.views.aggregated_kline import AggregatedKLineListView
+from market.views.kline import KLineView
 
 urlpatterns = [
-    path("kline/", KLineAPIView.as_view(), name="kline"),
+    path("kline/", KLineView.as_view(), name="kline"),
+    path("aggregatedkline/", AggregatedKLineListView.as_view(), name="aggregatedkline-list"),
 ]

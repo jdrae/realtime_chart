@@ -1,21 +1,18 @@
 from collections import defaultdict
 
 import django
-from config.config import INTERVAL_COLUMNS
-from django.core.exceptions import FieldError
 from django.db import transaction
 from django.db.models import Count, Max, Min, Sum, QuerySet
+
+from enums.interval import Interval
 from market.models import CheckpointEnum
 from market.models.aggregated_kline import AggregatedKline
 from market.models.aggregated_kline_checkpoint import AggregatedKlineCheckpoint
 from market.models.kline import Kline
-from market.services.time_utils import get_interval_ranges, is_valid_range, get_interval_columns
+from market.services.time_utils import get_interval_ranges, is_valid_range
 
 
 def get_pending_checkpoint(column_name):
-    if column_name not in INTERVAL_COLUMNS:
-        raise FieldError(f"'{column_name}' is not a valid interval column")
-
     filter_kwargs = {column_name: CheckpointEnum.PENDING}
     return AggregatedKlineCheckpoint.objects.filter(**filter_kwargs)
 
@@ -81,7 +78,7 @@ def update_checkpoint(interval, checkpoints: QuerySet, value: CheckpointEnum):
         print("Error: Checkpoint and aggregated table are not consistent")
         return
 
-    filter_kwargs = {get_interval_columns(interval): value}
+    filter_kwargs = {Interval.from_label(interval).column: value}
     checkpoints.update(**filter_kwargs)
 
 

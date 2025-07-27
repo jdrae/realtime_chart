@@ -7,6 +7,7 @@ class Kline(models.Model):
     class Meta:
         db_table = "kline_1s_processed"
         managed = TRUE_IF_TEST_ELSE_FALSE
+        unique_together = ("symbol", "start_time")
 
     id = models.BigAutoField(primary_key=True)
 

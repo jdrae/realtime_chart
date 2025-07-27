@@ -1,19 +1,20 @@
 import time
 
 from celery import shared_task
+
+from enums.interval import Interval
 from market.services.kline_aggregator import (
     get_pending_checkpoint,
     arrange_checkpoint,
     check_and_insert,
 )
-from market.services.time_utils import get_interval_columns
 
 
 @shared_task
 def aggregate_1m():
     print("Starting task aggregate_1m")
     interval = "1m"
-    target_column = get_interval_columns(interval)
+    target_column = Interval.from_label(interval).column
     retries = 3
     wait_sec = 5
 
