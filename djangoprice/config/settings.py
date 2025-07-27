@@ -16,18 +16,12 @@ import sys
 IS_TEST = sys.argv[1:2] == ["test"]
 TRUE_IF_TEST_ELSE_FALSE = True if IS_TEST else False
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env("DJANGO_SECRET_KEY")
 
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env("DJANGO_DEBUG") == "True"
 
 ALLOWED_HOSTS = env("DJANGO_ALLOWED_HOSTS").split(",")
-
-# Application definition
+CORS_ALLOWED_ORIGINS = env("DJANGO_CORS_ALLOWED_ORIGINS").split(",")
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -40,9 +34,11 @@ INSTALLED_APPS = [
     "market.apps.MarketConfig",
     # pips
     "django_celery_beat",
+    "corsheaders",
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
