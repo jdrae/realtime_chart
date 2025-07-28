@@ -108,11 +108,13 @@ class TestKlineAggregator(TestCase):
         symbol = "BTCUSDT"
         left_invalid_range_end_time = 1753326000000
         valid_range_start_time = 1753326000000
-        valid_range_end_time = 1753326300000
+        valid_range_end_time = 1753326300000 - 1
         right_invalid_range_start_time = 1753326300000
 
-        successful_insert = check_and_insert(interval, symbol, arranged_checkpoints[symbol])
-        self.assertEqual(successful_insert, self.valid_1m_ranges)
+        inserted_data = check_and_insert(interval, symbol, arranged_checkpoints[symbol])
+        self.assertEqual(len(inserted_data), self.valid_1m_ranges)
+        self.assertEqual(inserted_data[0].start_time, valid_range_start_time)
+        self.assertEqual(inserted_data[-1].close_time, valid_range_end_time)
 
         # Aggregated
         checkpoints = AggregatedKlineCheckpoint.objects.filter(
@@ -142,11 +144,13 @@ class TestKlineAggregator(TestCase):
         symbol = "ETHUSDT"
         left_invalid_range_end_time = 1753326000000
         valid_range_start_time = 1753326000000
-        valid_range_end_time = 1753326300000
+        valid_range_end_time = 1753326300000 - 1
         right_invalid_range_start_time = 1753326300000
 
-        successful_insert = check_and_insert(interval, symbol, arranged_checkpoints[symbol])
-        self.assertEqual(successful_insert, self.valid_5m_ranges)
+        inserted_data = check_and_insert(interval, symbol, arranged_checkpoints[symbol])
+        self.assertEqual(len(inserted_data), self.valid_5m_ranges)
+        self.assertEqual(inserted_data[0].start_time, valid_range_start_time)
+        self.assertEqual(inserted_data[-1].close_time, valid_range_end_time)
 
         # Aggregated
         checkpoints = AggregatedKlineCheckpoint.objects.filter(
@@ -179,8 +183,8 @@ class TestKlineAggregator(TestCase):
         valid_range_end_time = 1753326300000
         right_invalid_range_start_time = 1753326300000
 
-        successful_insert = check_and_insert(interval, symbol, arranged_checkpoints[symbol])
-        self.assertEqual(successful_insert, 0)
+        inserted_data = check_and_insert(interval, symbol, arranged_checkpoints[symbol])
+        self.assertEqual(len(inserted_data), 0)
 
         # Pending
         checkpoints = AggregatedKlineCheckpoint.objects.filter(symbol=symbol)

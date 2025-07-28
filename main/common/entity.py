@@ -104,3 +104,41 @@ class AggregatedKlineCheckpoint(Entity):
         "is_5m_aggregated",
         "is_15m_aggregated",
     }
+
+
+@dataclass
+class AggregatedKline(Entity):
+    interval: str
+    symbol: str
+    start_time: int
+    close_time: int
+    open_price: str
+    close_price: str
+    high_price: str
+    low_price: str
+    trade_count: int
+    volume_base: str
+    volume_quote: str
+    taker_volume_base: str
+    taker_volume_quote: str
+
+    id: Optional[str] = None
+    created_at: Optional[str] = None
+    EXCLUDE_INSERT_COLS = {"id", "created_at"}
+
+
+@dataclass
+class Indicator(Entity):
+    symbol: str
+    interval: str
+    start_time: int
+
+    label: str
+    value: Optional[str] = None
+
+    id: Optional[str] = None
+    created_at: Optional[str] = None
+    EXCLUDE_INSERT_COLS = {
+        "id",
+        "created_at",
+    }

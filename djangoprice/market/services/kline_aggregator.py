@@ -1,9 +1,9 @@
 from collections import defaultdict
+from typing import List
 
 import django
 from django.db import transaction
 from django.db.models import Count, Max, Min, Sum, QuerySet
-
 from enums.interval import Interval
 from market.models import CheckpointEnum
 from market.models.aggregated_kline import AggregatedKline
@@ -83,11 +83,11 @@ def update_checkpoint(interval, checkpoints: QuerySet, value: CheckpointEnum):
 
 
 @transaction.atomic
-def check_and_insert(interval, symbol, ranges):
+def check_and_insert(interval, symbol, ranges) -> List[AggregatedKline]:
     # Iterate each range and check if it's valid and aggregate it.
     # Update checkpoint if checkpoint range is purely valid.
     # Log error if checkpoint range has not aggregated range and no data before it.
-    successful_insert = 0
+    inserted_data = []
     left_invalid_range_end_time = 0
     right_invalid_range_start_time = 0
     first_ms = ranges[0][0]
@@ -99,18 +99,18 @@ def check_and_insert(interval, symbol, ranges):
             aggregated_kline = aggregate_kline_data(interval, symbol, start_ms, end_ms)
             if aggregated_kline:
                 insert_kline_data(aggregated_kline)
-                successful_insert += 1
+                inserted_data.append(aggregated_kline)
             else:
                 print(f"Error: Checkpoint and raw table are not consistent. {symbol} [{start_ms}, {end_ms}]")
         else:
-            if successful_insert == 0:  # update until first valid ranges
+            if len(inserted_data) == 0:  # update until first valid ranges
                 left_invalid_range_end_time = end_ms
-            if successful_insert != 0:  # first invalid range after valid ranges
+            if len(inserted_data) != 0:  # first invalid range after valid ranges
                 right_invalid_range_start_time = start_ms
                 break
 
     # UPDATE
-    if successful_insert != 0:
+    if len(inserted_data) != 0:
         checkpoints = AggregatedKlineCheckpoint.objects.filter(
             symbol=symbol, first_time__gte=first_ms, last_time__lte=last_ms
         )
@@ -126,4 +126,4 @@ def check_and_insert(interval, symbol, ranges):
             )
             update_checkpoint(interval, checkpoints, CheckpointEnum.PENDING)
 
-    return successful_insert  # for test
+    return inserted_data

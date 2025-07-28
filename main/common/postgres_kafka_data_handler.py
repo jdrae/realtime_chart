@@ -3,7 +3,7 @@ from main.common.kafka_consumer import KafkaDataHandler
 
 class PostgresKafkaDataHandler(KafkaDataHandler):
     def __init__(self, group_id, mapper, inserter_raw, inserter_processed, inserter_failed):
-        self.group_id = group_id
+        super().__init__(group_id)
         self.mapper = mapper
         self.inserter_raw = inserter_raw
         self.inserter_processed = inserter_processed

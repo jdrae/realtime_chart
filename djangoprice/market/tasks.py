@@ -1,8 +1,9 @@
 import time
 
 from celery import shared_task
-
 from enums.interval import Interval
+from market.serializers.aggregated_kline import AggregatedKLineSerializer
+from market.services.kafka_publisher import publish_data_to_kafka
 from market.services.kline_aggregator import (
     get_pending_checkpoint,
     arrange_checkpoint,
@@ -14,6 +15,7 @@ from market.services.kline_aggregator import (
 def aggregate_1m():
     print("Starting task aggregate_1m")
     interval = "1m"
+    kafka_topic = "aggregated_kline_1m"
     target_column = Interval.from_label(interval).column
     retries = 3
     wait_sec = 5
@@ -27,4 +29,7 @@ def aggregate_1m():
             break
         arranged_checkpoints = arrange_checkpoint(interval, checkpoints)
         for symbol, ranges in arranged_checkpoints.items():
-            check_and_insert(interval, symbol, ranges)
+            inserted_data = check_and_insert(interval, symbol, ranges)
+            serialized_data = AggregatedKLineSerializer(inserted_data, many=True)  # ?
+            for aggregated_kline in serialized_data:
+                publish_data_to_kafka(kafka_topic, aggregated_kline)

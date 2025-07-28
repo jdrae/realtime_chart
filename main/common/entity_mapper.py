@@ -80,3 +80,27 @@ class KlineEntityMapper(JsonEntityMapper):
             taker_volume_base=data["k"]["V"],
             taker_volume_quote=data["k"]["Q"],
         )
+
+
+class AggregatedKlineEntityMapper(JsonEntityMapper):
+
+    def get_target_class(self):
+        return AggregatedKline
+
+    def get_processed(self, data: str) -> AggregatedKline:
+        data = json.loads(str(data))
+        return AggregatedKline(
+            interval=data["interval"],
+            symbol=data["id"],
+            start_time=data["start_time"],
+            close_time=data["close_time"],
+            open_price=data["open_price"],
+            close_price=data["close_price"],
+            high_price=data["high_price"],
+            low_price=data["low_price"],
+            trade_count=data["trade_count"],
+            volume_base=data["volume_base"],
+            volume_quote=data["volume_quote"],
+            taker_volume_base=data["taker_volume_base"],
+            taker_volume_quote=data["taker_volume_quote"],
+        )
