@@ -19,7 +19,7 @@ class WebsocketClient(threading.Thread):
 
     def stop(self):
         self.close()  # end connection
-        super().join()  # end threa
+        super().join()  # end thread
 
     def ping(self):
         self.logger.debug("Sending ping to Binance WebSocket Server")

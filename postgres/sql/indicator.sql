@@ -1,5 +1,5 @@
 CREATE TABLE indicator (
-    id SERIAL PRIMARY KEY,
+    id SERIAL,
     symbol VARCHAR(20) NOT NULL,
     interval VARCHAR(10) NOT NULL,
     start_time BIGINT NOT NULL,
@@ -9,11 +9,5 @@ CREATE TABLE indicator (
 
     created_at TIMESTAMP DEFAULT (NOW() AT TIME ZONE 'UTC'),
 
-    CONSTRAINT unique_symbol_interval_start_time_key UNIQUE (symbol, interval, start_time, label)
-) PARTITION BY LIST (label);
-
-CREATE TABLE indicator_ma_7 PARTITION OF indicator
-    FOR VALUES IN ('ma_7');
-
-CREATE TABLE indicator_ma_20 PARTITION OF indicator
-    FOR VALUES IN ('ma_20');
+    CONSTRAINT indicator_unique UNIQUE (label, symbol, interval, start_time) -- TODO: partitioning by label
+);

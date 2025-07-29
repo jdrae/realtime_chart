@@ -2,7 +2,7 @@ import logging
 from abc import ABC, abstractmethod
 from collections import defaultdict
 
-from pythonprice.common.entity import AggregatedKlineCheckpoint
+from pythonapp.common.entity import AggregatedKlineCheckpoint
 
 
 class CheckpointHandler(ABC):

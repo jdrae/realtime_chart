@@ -1,8 +1,8 @@
 import json
 import logging
 
-from pythonprice.common.utils import get_timestamp
-from pythonprice.common.websocket_client import WebsocketClient
+from pythonapp.common.utils import get_timestamp
+from pythonapp.common.websocket_client import WebsocketClient
 
 
 class BinanceConnector:

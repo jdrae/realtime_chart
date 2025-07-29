@@ -1,5 +1,3 @@
-version: "3"
-
 services:
   kafka:
     image: bitnami/kafka:latest
@@ -39,6 +37,59 @@ services:
         condition: service_healthy
     networks:
       - bridge
+
+  postgres:
+    build: postgres
+    container_name: postgres
+    shm_size: 128mb
+    volumes:
+      - ${POSTGRES_VOLUME}:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - bridge
+
+  producer:
+    build: pythonapp
+    container_name: producer
+    command: python -m pythonapp.apps.produce --stream kline_1s --symbols btcusdt # ethusdt xrpusdt
+    env_file:
+      - pythonapp/.env
+    depends_on:
+      kafka:
+        condition: service_healthy
+    networks:
+      - bridge
+
+  inserter:
+    build: pythonapp
+    container_name: inserter
+    command: python -m pythonapp.apps.insert --stream kline_1s
+    env_file:
+      - pythonapp/.env
+    depends_on:
+      kafka:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    networks:
+      - bridge
+
+#  calculator:
+#    build: pythonapp
+#    container_name: calculator
+#    command: python pythonapp/apps/calculate.py
+#    env_file:
+#      - pythonapp/.env
 
 networks:
   bridge:

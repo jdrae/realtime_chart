@@ -1,7 +1,7 @@
 from abc import abstractmethod
 from collections import deque
 
-from pythonprice.common.entity import AggregatedKline, Indicator
+from pythonapp.common.entity import AggregatedKline, Indicator
 
 
 class IndicatorCalculator:

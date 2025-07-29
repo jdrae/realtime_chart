@@ -5,15 +5,15 @@ import os
 import signal
 import sys
 
-from pythonprice.common.checkpoint_handler import KlineCheckpointHandler
-from pythonprice.common.entity import *
-from pythonprice.common.entity_mapper import get_json_entity_mapper
-from pythonprice.common.kafka_consumer import KafkaConsumerManager
-from pythonprice.common.postgres_client import BatchInserter, PostgresClient
-from pythonprice.common.postgres_kafka_data_handler import PostgresKafkaDataHandler
-from pythonprice.common.utils import default_logger
+from pythonapp.common.checkpoint_handler import KlineCheckpointHandler
+from pythonapp.common.entity import Failed, Raw
+from pythonapp.common.entity_mapper import get_json_entity_mapper
+from pythonapp.common.kafka_consumer import KafkaConsumerManager
+from pythonapp.common.postgres_client import PostgresClient, BatchInserter
+from pythonapp.common.postgres_kafka_data_handler import PostgresKafkaDataHandler
+from pythonapp.common.utils import default_logger
 
-logger = default_logger("pythonprice", logging.DEBUG)
+logger = default_logger("pythonapp", logging.DEBUG)
 
 
 def handle_exit(signum, frame):
@@ -28,7 +28,7 @@ signal.signal(signal.SIGTERM, handle_exit)
 
 def save_data(stream):
     config = configparser.ConfigParser()
-    config.read("config.ini")
+    config.read("pythonapp/config.ini")  # TODO: change to config.py
 
     try:
         stream = stream.upper()

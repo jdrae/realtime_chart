@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS kline_1s_failed (
+CREATE TABLE IF NOT EXISTS indicator_failed (
     id SERIAL PRIMARY KEY,
     payload JSONB NOT NULL,
     error TEXT NULL,

@@ -5,12 +5,12 @@ import logging
 import os
 import signal
 
-from pythonprice.common.binance_connector import BinanceConnector
-from pythonprice.common.kafka_publisher_async import AsyncKafkaPublisher
-from pythonprice.common.utils import default_logger
-from pythonprice.common.websocket_client import WebsocketClient
+from pythonapp.common.binance_connector import BinanceConnector
+from pythonapp.common.kafka_publisher_async import AsyncKafkaPublisher
+from pythonapp.common.utils import default_logger
+from pythonapp.common.websocket_client import WebsocketClient
 
-logger = default_logger("pythonprice", logging.DEBUG)  # write project's root module to propagate log config
+logger = default_logger("pythonapp", logging.DEBUG)  # write project's root module to propagate log config
 
 
 def handle_exit(signum, shutdown_event):
@@ -21,7 +21,7 @@ def handle_exit(signum, shutdown_event):
 
 async def produce_data(stream, symbols):
     config = configparser.ConfigParser()
-    config.read("config.ini")
+    config.read("pythonapp/config.ini")  # TODO: change to config.py
 
     try:
         stream = stream.upper()

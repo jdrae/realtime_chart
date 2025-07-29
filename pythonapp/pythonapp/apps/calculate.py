@@ -2,17 +2,17 @@ import configparser
 import logging
 import os
 
-from pythonprice.common.indicator import MovingAverageCalculator
-from pythonprice.common.indicator_kafka_data_handler import IndicatorKafkaDataHandler
-from pythonprice.common.kafka_consumer import KafkaConsumerManager
-from pythonprice.common.postgres_client import PostgresClient
-from pythonprice.common.utils import default_logger
+from pythonapp.common.indicator import MovingAverageCalculator
+from pythonapp.common.indicator_kafka_data_handler import IndicatorKafkaDataHandler
+from pythonapp.common.kafka_consumer import KafkaConsumerManager
+from pythonapp.common.postgres_client import PostgresClient
+from pythonapp.common.utils import default_logger
 
-logger = default_logger("pythonprice", logging.DEBUG)
+logger = default_logger("pythonapp", logging.DEBUG)
 
 
 config = configparser.ConfigParser()
-config.read("config.ini")
+config.read("pythonapp/config.ini")  # TODO: change to config.py
 
 symbols = config["SYMBOLS"]
 
