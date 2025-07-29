@@ -10,7 +10,7 @@ CREATE TABLE indicator (
     created_at TIMESTAMP DEFAULT (NOW() AT TIME ZONE 'UTC'),
 
     CONSTRAINT unique_symbol_interval_start_time_key UNIQUE (symbol, interval, start_time, label)
-) PARTITION BY LIST (indicator);
+) PARTITION BY LIST (label);
 
 CREATE TABLE indicator_ma_7 PARTITION OF indicator
     FOR VALUES IN ('ma_7');

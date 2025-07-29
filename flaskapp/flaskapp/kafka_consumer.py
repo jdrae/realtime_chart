@@ -1,18 +1,19 @@
 import json
 import logging
+import os
 
+from flaskapp.config import KAFKA_TOPIC, KAFKA_GROUP_ID
+from flaskapp.state import StreamManager
 from kafka import KafkaConsumer
-
-from flaskprice.config import KAFKA_TOPIC, KAFKA_BOOTSTRAP_SERVERS, KAFKA_GROUP_ID
-from flaskprice.state import StreamManager
 
 
 def kafka_consumer_loop(stream_manager: StreamManager):
     logger = logging.getLogger(__name__)
+    logger.info(f"Connecting to kafka: {os.getenv('KAFKA_BOOTSTRAP_SERVERS')}")
 
     consumer = KafkaConsumer(
         KAFKA_TOPIC,
-        bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS,
+        bootstrap_servers=os.getenv("KAFKA_BOOTSTRAP_SERVERS"),
         value_deserializer=lambda x: json.loads(x.decode("utf-8")),
         group_id=KAFKA_GROUP_ID,
     )

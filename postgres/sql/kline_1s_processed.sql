@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS kline_1s_processed (
     volume_quote       NUMERIC,            -- "k.q": Quote asset volume
     taker_volume_base NUMERIC,            -- "k.V": Taker buy base asset volume
     taker_volume_quote NUMERIC,           -- "k.Q": Taker buy quote asset volume
-    created_at TIMESTAMP DEFAULT (NOW() AT TIME ZONE 'UTC')
+    created_at TIMESTAMP DEFAULT (NOW() AT TIME ZONE 'UTC'),
 
     CONSTRAINT unique_symbol_start_time UNIQUE (symbol, start_time)
 );

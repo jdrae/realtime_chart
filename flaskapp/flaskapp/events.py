@@ -2,8 +2,7 @@ import logging
 
 from flask import request
 from flask_socketio import SocketIO, join_room, leave_room
-
-from flaskprice.state import StreamManager
+from flaskapp.state import StreamManager
 
 
 def register_events(socketio: SocketIO, stream_manager: StreamManager):

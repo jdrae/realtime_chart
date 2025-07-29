@@ -1,8 +1,7 @@
 import logging
 
 from flask_socketio import SocketIO
-
-from flaskprice.state import StreamManager
+from flaskapp.state import StreamManager
 
 
 def dispatch_data(socketio: SocketIO, stream_manager: StreamManager, stream: str):
