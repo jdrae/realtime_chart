@@ -1,7 +1,7 @@
-from main.common.entity import Failed, Indicator
-from main.common.entity_mapper import AggregatedKlineEntityMapper
-from main.common.indicator import IndicatorCalculator
-from main.common.kafka_consumer import KafkaDataHandler
+from pythonprice.common.entity import Failed, Indicator
+from pythonprice.common.entity_mapper import AggregatedKlineEntityMapper
+from pythonprice.common.indicator import IndicatorCalculator
+from pythonprice.common.kafka_consumer import KafkaDataHandler
 
 
 class IndicatorKafkaDataHandler(KafkaDataHandler):

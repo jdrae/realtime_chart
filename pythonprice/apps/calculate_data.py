@@ -2,13 +2,13 @@ import configparser
 import logging
 import os
 
-from main.common.indicator import MovingAverageCalculator
-from main.common.indicator_kafka_data_handler import IndicatorKafkaDataHandler
-from main.common.kafka_consumer import KafkaConsumerManager
-from main.common.postgres_client import PostgresClient
-from main.common.utils import default_logger
+from pythonprice.common.indicator import MovingAverageCalculator
+from pythonprice.common.indicator_kafka_data_handler import IndicatorKafkaDataHandler
+from pythonprice.common.kafka_consumer import KafkaConsumerManager
+from pythonprice.common.postgres_client import PostgresClient
+from pythonprice.common.utils import default_logger
 
-logger = default_logger("main", logging.DEBUG)
+logger = default_logger("pythonprice", logging.DEBUG)
 
 
 config = configparser.ConfigParser()

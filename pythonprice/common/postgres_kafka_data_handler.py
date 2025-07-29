@@ -1,4 +1,4 @@
-from main.common.kafka_consumer import KafkaDataHandler
+from pythonprice.common.kafka_consumer import KafkaDataHandler
 
 
 class PostgresKafkaDataHandler(KafkaDataHandler):

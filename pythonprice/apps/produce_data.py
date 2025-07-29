@@ -5,12 +5,12 @@ import logging
 import os
 import signal
 
-from main.common.binance_connector import BinanceConnector
-from main.common.kafka_publisher_async import AsyncKafkaPublisher
-from main.common.utils import default_logger
-from main.common.websocket_client import WebsocketClient
+from pythonprice.common.binance_connector import BinanceConnector
+from pythonprice.common.kafka_publisher_async import AsyncKafkaPublisher
+from pythonprice.common.utils import default_logger
+from pythonprice.common.websocket_client import WebsocketClient
 
-logger = default_logger("main", logging.DEBUG)  # write project's root module to propagate log config
+logger = default_logger("pythonprice", logging.DEBUG)  # write project's root module to propagate log config
 
 
 def handle_exit(signum, shutdown_event):

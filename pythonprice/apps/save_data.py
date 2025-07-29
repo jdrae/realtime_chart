@@ -5,15 +5,15 @@ import os
 import signal
 import sys
 
-from main.common.checkpoint_handler import KlineCheckpointHandler
-from main.common.entity import *
-from main.common.entity_mapper import get_json_entity_mapper
-from main.common.kafka_consumer import KafkaConsumerManager
-from main.common.postgres_client import BatchInserter, PostgresClient
-from main.common.postgres_kafka_data_handler import PostgresKafkaDataHandler
-from main.common.utils import default_logger
+from pythonprice.common.checkpoint_handler import KlineCheckpointHandler
+from pythonprice.common.entity import *
+from pythonprice.common.entity_mapper import get_json_entity_mapper
+from pythonprice.common.kafka_consumer import KafkaConsumerManager
+from pythonprice.common.postgres_client import BatchInserter, PostgresClient
+from pythonprice.common.postgres_kafka_data_handler import PostgresKafkaDataHandler
+from pythonprice.common.utils import default_logger
 
-logger = default_logger("main", logging.DEBUG)
+logger = default_logger("pythonprice", logging.DEBUG)
 
 
 def handle_exit(signum, frame):

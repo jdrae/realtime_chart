@@ -1,7 +1,7 @@
 import json
 from abc import abstractmethod
 
-from main.common.entity import *
+from pythonprice.common.entity import *
 
 
 def get_json_entity_mapper(target_entity):
