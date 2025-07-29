@@ -84,12 +84,35 @@ services:
     networks:
       - bridge
 
-#  calculator:
-#    build: pythonapp
-#    container_name: calculator
-#    command: python pythonapp/apps/calculate.py
-#    env_file:
-#      - pythonapp/.env
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+    networks:
+      - bridge
+
+  django:
+    build: djangoapp
+    container_name: django
+    ports:
+      - "8000:8000"
+    env_file:
+      - djangoapp/.env
+    depends_on:
+      kafka:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - bridge
 
 networks:
   bridge:
