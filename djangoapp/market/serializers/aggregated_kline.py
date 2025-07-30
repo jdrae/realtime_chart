@@ -1,6 +1,5 @@
-from rest_framework import serializers
-
 from market.models import AggregatedKline
+from rest_framework import serializers
 
 
 class AggregatedKLineSerializer(serializers.ModelSerializer):
@@ -10,6 +9,7 @@ class AggregatedKLineSerializer(serializers.ModelSerializer):
             "id",
             "interval",
             "symbol",
+            "start_time_utc",
             "start_time",
             "close_time",
             "open_price",

@@ -1,3 +1,4 @@
+import logging
 from collections import defaultdict
 from typing import List
 
@@ -9,7 +10,9 @@ from market.models import CheckpointEnum
 from market.models.aggregated_kline import AggregatedKline
 from market.models.aggregated_kline_checkpoint import AggregatedKlineCheckpoint
 from market.models.kline import Kline
-from market.services.time_utils import get_interval_ranges, is_valid_range
+from market.services.time_utils import get_interval_ranges, is_valid_range, ms_to_utctime
+
+logger = logging.getLogger(__name__)
 
 
 def get_pending_checkpoint(column_name):
@@ -38,7 +41,6 @@ def aggregate_kline_data(interval, symbol, start_ms, end_ms):
         "start_time"
     )
     if not raw_qs.exists():
-        print("Warning: No data for symbol", symbol)
         return None
 
     first_row = raw_qs.first()
@@ -58,6 +60,7 @@ def aggregate_kline_data(interval, symbol, start_ms, end_ms):
     return AggregatedKline(
         interval=interval,
         symbol=symbol,
+        start_time_utc=ms_to_utctime(first_row.start_time),
         start_time=first_row.start_time,
         close_time=last_row.close_time,
         open_price=first_row.open_price,
@@ -70,12 +73,12 @@ def insert_kline_data(instance: AggregatedKline):
     try:
         instance.save()
     except django.db.utils.IntegrityError as e:
-        print(f"Warning: duplicated kline data:{e}")
+        logger.warning(f"Duplicated kline data:{e}")
 
 
 def update_checkpoint(interval, checkpoints: QuerySet, value: CheckpointEnum):
     if not checkpoints.exists():
-        print("Error: Checkpoint and aggregated table are not consistent")
+        logger.error("Checkpoint and aggregated table are not consistent")
         return
 
     filter_kwargs = {Interval.from_label(interval).column: value}
@@ -101,7 +104,9 @@ def check_and_insert(interval, symbol, ranges) -> List[AggregatedKline]:
                 insert_kline_data(aggregated_kline)
                 inserted_data.append(aggregated_kline)
             else:
-                print(f"Error: Checkpoint and raw table are not consistent. {symbol} [{start_ms}, {end_ms}]")
+                logger.error(
+                    f"Checkpoint and raw table are not consistent. {symbol} [{ms_to_utctime(start_ms)}, {ms_to_utctime(end_ms)}]"
+                )
         else:
             if len(inserted_data) == 0:  # update until first valid ranges
                 left_invalid_range_end_time = end_ms

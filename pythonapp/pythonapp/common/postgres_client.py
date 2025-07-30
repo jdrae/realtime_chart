@@ -46,13 +46,13 @@ class PostgresClient:
 
 
 class BatchInserter:
-    def __init__(self, db_client, query, max_batch_size, interval_seconds=0, checkpoint_handler=None):
+    def __init__(self, db_client, query, max_batch_size, flush_worker=False, checkpoint_handler=None):
         self.logger = logging.getLogger(__name__ + ".BatchInserter")
 
         self.db_client = db_client
         self.query = query
         self.max_batch_size = max_batch_size
-        self.interval_seconds = interval_seconds
+        self.flush_worker = flush_worker
         self.checkpoint_handler = checkpoint_handler
 
         self.buffer = []
@@ -65,9 +65,10 @@ class BatchInserter:
     def start(self):
         self.logger.info("Starting BatchInserter...")
         self.running = True
-        self.flush_thread = threading.Thread(target=self._flush_worker, daemon=True)
+        if self.flush_worker:
+            self.flush_thread = threading.Thread(target=self._flush_worker, daemon=True)
+            self.flush_thread.start()
         self.insert_thread = threading.Thread(target=self._insert_worker, daemon=False)
-        self.flush_thread.start()
         self.insert_thread.start()
         self.logger.info("BatchInserter started")
 
@@ -86,12 +87,11 @@ class BatchInserter:
         self.flush_queue.put(batch)
 
     def _flush_worker(self):
-        if self.interval_seconds == 0:
-            # _flush_worker ends immediately
-            return
+        padding = 2  # flush every *m 2s
         while self.running:
             now = int(datetime.now().timestamp())
-            sleep_duration = ((now // self.interval_seconds) + 1) * self.interval_seconds - now
+            target = int(datetime.now().replace(second=0, microsecond=0).timestamp()) + 60 + padding
+            sleep_duration = target - now
             time.sleep(sleep_duration)
             with self.lock:
                 self._flush()

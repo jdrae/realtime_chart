@@ -48,15 +48,16 @@ def save_data(stream):
     inserter_processed = BatchInserter(
         db_client,
         query=target_class.sql_insert(config[stream]["POSTGRES_TABLE_PROCESSED"]),
-        max_batch_size=180,
-        interval_seconds=60,
+        max_batch_size=100,
+        flush_worker=True,
         checkpoint_handler=checkpoint_handler,
     )
-    inserter_raw = BatchInserter(
-        db_client,
-        query=Raw.sql_insert(config[stream]["POSTGRES_TABLE_RAW"]),
-        max_batch_size=60,
-    )
+    # note: not saving raw data to save cost
+    # inserter_raw = BatchInserter(
+    #     db_client,
+    #     query=Raw.sql_insert(config[stream]["POSTGRES_TABLE_RAW"]),
+    #     max_batch_size=60,
+    # )
     inserter_failed = BatchInserter(
         db_client,
         query=Failed.sql_insert(config[stream]["POSTGRES_TABLE_FAILED"]),
@@ -67,7 +68,7 @@ def save_data(stream):
         group_id=config[stream]["KAFKA_GROUP_POSTGRES"],
         mapper=mapper,
         inserter_processed=inserter_processed,
-        inserter_raw=inserter_raw,
+        inserter_raw=None,
         inserter_failed=inserter_failed,
     )
 
@@ -86,12 +87,12 @@ def save_data(stream):
             port=os.getenv("POSTGRES_PORT"),
         )
         inserter_processed.start()
-        inserter_raw.start()
+        # inserter_raw.start()
         inserter_failed.start()
         consumer.run()
     finally:
         inserter_processed.stop()
-        inserter_raw.stop()
+        # inserter_raw.stop()
         inserter_failed.stop()
         db_client.close()
 

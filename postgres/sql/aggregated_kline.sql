@@ -2,6 +2,7 @@ CREATE TABLE aggregated_kline (
     id SERIAL PRIMARY KEY,
     symbol VARCHAR(20) NOT NULL,
     interval VARCHAR(10) NOT NULL,
+    start_time_utc TIMESTAMP NOT NULL,
     start_time BIGINT NOT NULL,
     close_time BIGINT NOT NULL,
     row_count INTEGER NOT NULL,

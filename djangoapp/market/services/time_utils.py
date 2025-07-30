@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import timezone, datetime
 
 from enums.interval import Interval
 
@@ -9,6 +9,10 @@ def ms_to_sec(ms: int) -> int:
 
 def sec_to_ms(sec: int) -> int:
     return sec * 1000
+
+
+def ms_to_utctime(ms: int) -> datetime:
+    return datetime.fromtimestamp(ms / 1000, timezone.utc)
 
 
 def get_interval_ranges(interval: str, first_ms: int, last_ms: int) -> list:

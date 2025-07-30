@@ -1,6 +1,5 @@
-from django.db import models
-
 from config.settings import TRUE_IF_TEST_ELSE_FALSE
+from django.db import models
 
 
 class AggregatedKline(models.Model):
@@ -11,6 +10,7 @@ class AggregatedKline(models.Model):
 
     interval = models.CharField(max_length=10)
     symbol = models.CharField(max_length=20)
+    start_time_utc = models.DateTimeField()
     start_time = models.BigIntegerField()
     close_time = models.BigIntegerField()
     row_count = models.IntegerField()
