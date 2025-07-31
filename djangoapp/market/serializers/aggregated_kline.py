@@ -6,10 +6,9 @@ class AggregatedKLineSerializer(serializers.ModelSerializer):
     class Meta:
         model = AggregatedKline
         fields = [
-            "id",
+            "start_time_utc",
             "interval",
             "symbol",
-            "start_time_utc",
             "start_time",
             "close_time",
             "open_price",
