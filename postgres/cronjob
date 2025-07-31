@@ -1,0 +1,1 @@
+*/30 * * * * bash -c 'source /app/.env && echo "Crontab executed at $(date)" && psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -f /app/cron.sql' >> /proc/1/fd/1 2>&1

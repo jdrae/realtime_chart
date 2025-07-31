@@ -1,0 +1,1 @@
+DELETE FROM kline_1s_processed WHERE created_at < NOW() - INTERVAL '30 minutes';

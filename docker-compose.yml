@@ -1,6 +1,6 @@
 services:
   kafka:
-    image: bitnami/kafka:latest
+    image: bitnami/kafka:4.0.0
     container_name: kafka
     ports:
       - "9092:9092"
@@ -13,7 +13,7 @@ services:
       - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
       - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@localhost:9093
       - ALLOW_PLAINTEXT_LISTENER=yes
-      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
+      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=${KAFKA_AUTO_TOPIC_ENABLED}
     healthcheck:
       test: [
         "CMD-SHELL", 
@@ -61,7 +61,7 @@ services:
   producer:
     build: pythonapp
     container_name: producer
-    command: python -m pythonapp.apps.produce --stream kline_1s --symbols btcusdt # ethusdt xrpusdt
+    command: python -m pythonapp.apps.produce --stream kline_1s --symbols btcusdt ethusdt
     env_file:
       - pythonapp/.env
     depends_on:

@@ -80,3 +80,22 @@ unsubscribe with different id:
   - timing is not a solution. need to use another db
 - round milliseconds to prevent overflow
 - window calculation from aggregated data
+
+## 7. Deploy
+- Create kafka topic with retention 10 minutes
+```
+docker exec -it kafka bash
+
+kafka-topics.sh --create --if-not-exists \
+--bootstrap-server localhost:9092 \
+--topic kline_1s \
+--partitions 1 --replication-factor 1  \
+--config retention.ms=600000
+
+kafka-configs.sh --describe --bootstrap-server localhost:9092 --entity-type topics --entity-name kline_1s
+
+kafka-configs.sh --alter \
+--bootstrap-server localhost:9092 --entity-type topics \
+--entity-name kline_1s \
+--add-config retention.ms=600000  
+```  

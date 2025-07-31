@@ -9,16 +9,21 @@ until pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"; do
   sleep 2
 done
 
-echo "PostgreSQL is ready. Executing SQL files in /sql..."
-
-for file in /sql/*.sql; do
+echo "PostgreSQL is ready. Executing SQL files in sql..."
+for file in sql/*.sql; do
   if [ -f "$file" ]; then
     echo "=== $file ==="
     cat "$file"
     echo
+    psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -f "$file"
   fi
-  psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -f "$file"
   echo "Done $file"
 done
+
+echo "Creating cronjob..."
+printenv | grep POSTGRES_ > /app/.env
+crontab /app/cronjob
+crontab -l
+cron
 
 wait
