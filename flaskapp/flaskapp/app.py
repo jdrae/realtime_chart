@@ -9,6 +9,12 @@ logger = default_logger("flaskapp", logging.INFO)
 
 app = create_app()
 
+
+@app.route("/health")
+def health():
+    return {"status": "ok"}
+
+
 if __name__ == "__main__":
     host = os.getenv("FLASK_RUN_HOST")
     port = os.getenv("FLASK_RUN_PORT")

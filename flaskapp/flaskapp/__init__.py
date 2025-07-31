@@ -2,6 +2,7 @@ import os
 import threading
 
 from flask import Flask
+from flask_cors import CORS
 from flask_socketio import SocketIO
 from flaskapp.config import SUPPORTED_STREAMS
 from flaskapp.dispatcher import dispatch_data
@@ -15,6 +16,8 @@ stream_manager = StreamManager(SUPPORTED_STREAMS)
 
 def create_app():
     app = Flask(__name__)
+    CORS(app, origins=os.getenv("CORS_ORIGINS"))
+
     socketio.init_app(app)
 
     register_events(socketio, stream_manager)

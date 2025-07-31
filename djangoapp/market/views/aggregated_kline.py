@@ -1,3 +1,5 @@
+from django.shortcuts import get_object_or_404
+
 from enums.interval import Interval
 from market.models import AggregatedKline
 from market.serializers.aggregated_kline import AggregatedKLineSerializer
@@ -25,9 +27,7 @@ class AggregatedKLineDetailView(APIView):
         interval = query_serializer.validated_data.get("interval")
         timestamp = query_serializer.validated_data.get("timestamp") * 1000
 
-        queryset = AggregatedKline.objects.filter(
-            symbol=symbol, interval=interval, start_time=timestamp
-        ).get()
+        queryset = get_object_or_404(AggregatedKline, symbol=symbol, interval=interval, start_time=timestamp)
         serializer = AggregatedKLineSerializer(queryset)
         return Response(serializer.data)
 
