@@ -7,43 +7,30 @@ services:
     environment:
       - KAFKA_CFG_PROCESS_ROLES=broker,controller
       - KAFKA_CFG_NODE_ID=1
-      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,INTERNAL:PLAINTEXT
-      - KAFKA_CFG_LISTENERS=PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093,INTERNAL://kafka:29092
-      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092,INTERNAL://kafka:29092
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT,INTERNAL:PLAINTEXT,PLAINTEXT:PLAINTEXT,
+      - KAFKA_CFG_LISTENERS=CONTROLLER://0.0.0.0:9093,EXTERNAL://0.0.0.0:9092,INTERNAL://kafka:29092,PLAINTEXT://0.0.0.0:39092
+      - KAFKA_CFG_ADVERTISED_LISTENERS=EXTERNAL://${KAFKA_IP}:9092,INTERNAL://kafka:29092,PLAINTEXT://localhost:39092
       - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
       - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@localhost:9093
       - ALLOW_PLAINTEXT_LISTENER=yes
       - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=${KAFKA_AUTO_TOPIC_ENABLED}
     healthcheck:
       test: [
-        "CMD-SHELL", 
-        "kafka-topics.sh --bootstrap-server localhost:9092 --list || exit 1"
+        "CMD-SHELL",
+        "kafka-topics.sh --bootstrap-server localhost:39092 --list || exit 1"
       ]
       interval: 5s
       timeout: 5s
       retries: 10
     networks:
       - bridge
-
-  flask:
-    build: flaskapp
-    container_name: flask
-    ports:
-      - "5000:5000"
-    env_file:
-      - flaskapp/.env
-    depends_on:
-      kafka:
-        condition: service_healthy
-    networks:
-      - bridge
+    volumes:
+      - kafka_volume:/bitnami/kafka
 
   postgres:
     build: postgres
     container_name: postgres
     shm_size: 128mb
-    volumes:
-      - ${POSTGRES_VOLUME}:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     environment:
@@ -55,6 +42,21 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
+    networks:
+      - bridge
+    volumes:
+      - postgres_volume:/var/lib/postgresql/data
+
+  flask:
+    build: flaskapp
+    container_name: flask
+    ports:
+      - "5000:5000"
+    env_file:
+      - flaskapp/.env
+    depends_on:
+      kafka:
+        condition: service_healthy
     networks:
       - bridge
 
@@ -106,8 +108,6 @@ services:
     env_file:
       - djangoapp/.env
     depends_on:
-      kafka:
-        condition: service_healthy
       postgres:
         condition: service_healthy
       redis:
@@ -117,3 +117,7 @@ services:
 
 networks:
   bridge:
+
+volumes:
+  kafka_volume:
+  postgres_volume:

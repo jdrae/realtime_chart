@@ -10,13 +10,13 @@ from flaskapp.events import register_events
 from flaskapp.kafka_consumer import kafka_consumer_loop
 from flaskapp.state import StreamManager
 
-socketio = SocketIO(async_mode="threading", cors_allowed_origins=os.getenv("CORS_ORIGINS"))
+socketio = SocketIO(async_mode="threading", cors_allowed_origins=os.getenv("CORS_ORIGINS").split(","))
 stream_manager = StreamManager(SUPPORTED_STREAMS)
 
 
 def create_app():
     app = Flask(__name__)
-    CORS(app, origins=os.getenv("CORS_ORIGINS"))
+    CORS(app, origins=os.getenv("CORS_ORIGINS").split(","))
 
     socketio.init_app(app)
 
